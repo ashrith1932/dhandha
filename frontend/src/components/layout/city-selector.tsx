@@ -27,7 +27,7 @@ interface CitySelectorProps {
 
 // Delicate line-art architectural sketches matching District in media_1794460697482_f756c618.jpg
 function CityLandmarkIcon({ city }: { city: string }) {
-  const strokeColor = "#4A43A1"; // Prussian/indigo purple tone
+  const strokeColor = "#E45A37";
   switch (city) {
     case "Abu Dhabi":
       return (
@@ -199,11 +199,11 @@ export function CitySelector({
             className="flex items-center gap-2 text-left group focus:outline-none transition-all py-1 px-1.5 rounded-xl hover:bg-black/5"
             aria-label="Change location"
           >
-            <div className="w-8 h-8 rounded-full bg-purple-50 text-indigo-700 flex items-center justify-center shrink-0">
-              <MapPin className="w-4 h-4 text-indigo-600" />
+            <div className="w-8 h-8 rounded-full bg-[#fce9df] text-[#e45a37] flex items-center justify-center shrink-0">
+              <MapPin className="w-4 h-4 text-[#e45a37]" />
             </div>
             <div className="flex flex-col text-left leading-tight">
-              <span className="font-heading font-bold text-sm text-ink-black flex items-center gap-1 group-hover:text-indigo-700 transition-colors">
+              <span className="font-heading font-bold text-sm text-ink-black flex items-center gap-1 group-hover:text-[#e45a37] transition-colors">
                 {selectedCity}
                 <ChevronDown className="w-3.5 h-3.5 text-text-muted transition-transform group-hover:translate-y-0.5" />
               </span>
@@ -213,9 +213,9 @@ export function CitySelector({
         ) : (
           <button
             type="button"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-border shadow-xs text-sm font-semibold hover:border-indigo-600 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-border shadow-xs text-sm font-semibold hover:border-[#e45a37] transition-all"
           >
-            <MapPin className="w-4 h-4 text-indigo-600" />
+            <MapPin className="w-4 h-4 text-[#e45a37]" />
             <span>{selectedCity}</span>
             <ChevronDown className="w-4 h-4 text-text-secondary" />
           </button>
@@ -239,7 +239,7 @@ export function CitySelector({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search city, area or locality"
-            className="h-12 pl-4 pr-10 bg-white border border-gray-200 rounded-2xl text-sm font-medium placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-indigo-600"
+            className="h-12 pl-4 pr-10 bg-white border border-gray-200 rounded-2xl text-sm font-medium placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-[#e45a37]"
           />
           <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         </div>
@@ -249,9 +249,9 @@ export function CitySelector({
           type="button"
           onClick={handleUseCurrentLocation}
           disabled={isLocating}
-          className="flex items-center gap-2.5 w-full py-3 text-left text-sm font-semibold text-indigo-700 hover:text-indigo-900 transition-all group"
+          className="flex items-center gap-2.5 w-full py-3 text-left text-sm font-semibold text-[#e45a37] hover:text-[#b93b25] transition-all group"
         >
-          <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+          <div className="w-6 h-6 rounded-full bg-[#fce9df] flex items-center justify-center text-[#e45a37]">
             <Crosshair className={cn("w-4 h-4", isLocating && "animate-spin")} />
           </div>
           <span>{isLocating ? "Detecting location..." : "Use Current Location"}</span>
@@ -274,12 +274,12 @@ export function CitySelector({
                   className={cn(
                     "flex flex-col items-center justify-center p-3 rounded-2xl border text-center transition-all group relative cursor-pointer",
                     isSelected
-                      ? "border-indigo-600 bg-purple-50/80 text-indigo-900 shadow-xs"
-                      : "border-transparent bg-purple-50/40 hover:bg-purple-50 hover:border-purple-200 text-gray-800"
+                      ? "border-[#e45a37] bg-[#fce9df]/80 text-[#171513] shadow-xs"
+                      : "border-transparent bg-[#f7f5f1] hover:bg-[#fce9df] hover:border-[#f3b4a1] text-gray-800"
                   )}
                 >
                   {isSelected && (
-                    <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center">
+                    <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#e45a37] text-white flex items-center justify-center">
                       <Check className="w-2.5 h-2.5 stroke-[3]" />
                     </span>
                   )}

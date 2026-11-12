@@ -1,0 +1,4364 @@
+//We dont allow restuarnats to sell but only private kitchens include chat option and call option if chef opts for it both redirected via whatsapp
+
+
+<html><head></head><body class="" style="overflow: auto;"><div id="mobile-sim-root" data-mobile-sim-element="" data-theme="dark" style="position: fixed; inset: 0px; z-index: 2147483647; background: rgb(0, 0, 0); overflow: hidden;"><template shadowrootmode="open"><style>/* Mobile Simulator — base reset + app layout + viewport area. */
+
+/* ─── Reset & Base ──────────────────────────────────────────────── */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:host,
+:host([data-theme='dark']) {
+  /* Apple warm dark grays */
+  --bg-primary: #000000;
+  --bg-secondary: #1c1c1e;
+  --bg-tertiary: #2c2c2e;
+  --bg-hover: #3a3a3c;
+  --border: #38383a;
+  --text-primary: #ffffff;
+  --text-secondary: #ebebf599;
+  --text-muted: #ebebf54d;
+  /* Cyan accent */
+  --accent: #5ac8fa;
+  --accent-hover: #7dd5fb;
+  --accent-glow: rgba(90, 200, 250, 0.12);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --frame-color: #1c1c1e;
+  --frame-shadow: rgba(0, 0, 0, 0.5);
+  --sidebar-width: 272px;
+  /* Semantic */
+  --green: #30d158;
+  --red: #ff453a;
+}
+
+:host([data-theme='light']) {
+  --bg-primary: #ececf0;
+  --bg-secondary: #f8f8fa;
+  --bg-tertiary: #e4e4ea;
+  --bg-hover: #d8d8e0;
+  --border: #c2c2c8;
+  --text-primary: #000000;
+  /* Higher contrast than Apple HIG defaults (0.6 / 0.35) — those are
+     designed for pure-white surfaces; our chrome bg is #ececf0 (~92%
+     gray), which washes out lower-opacity labels. Bumped 0.6→0.78 and
+     0.35→0.55 to keep quick-action / section-title labels readable. */
+  --text-secondary: rgba(60, 60, 67, 0.78);
+  --text-muted: rgba(60, 60, 67, 0.55);
+  --accent: #32ade6;
+  --accent-hover: #2898cc;
+  --accent-glow: rgba(50, 173, 230, 0.08);
+  --frame-color: #e5e5ea;
+  --frame-shadow: rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-color-scheme: light) {
+  :host([data-theme='system']) {
+    --bg-primary: #ececf0;
+    --bg-secondary: #f8f8fa;
+    --bg-tertiary: #e4e4ea;
+    --bg-hover: #d8d8e0;
+    --border: #c2c2c8;
+    --text-primary: #000000;
+    --text-secondary: rgba(60, 60, 67, 0.78);
+    --text-muted: rgba(60, 60, 67, 0.55);
+    --accent: #32ade6;
+    --accent-hover: #2898cc;
+    --accent-glow: rgba(50, 173, 230, 0.08);
+    --frame-color: #e5e5ea;
+    --frame-shadow: rgba(0, 0, 0, 0.12);
+  }
+}
+
+.app-layout {
+  height: 100%;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── App Layout (horizontal: viewport + sidebar) ───────────────── */
+
+.app-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── Viewport Area (full height, flex: 1) ──────────────────────── */
+
+.viewport-area {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* top / sides 24 px, bottom 48 px — extra breathing so the device frame
+     never visually kisses the viewport bottom edge on a 32" monitor at
+     scale=1. Synced with VIEWPORT_PAD_Y in src/sim/zoom.js so scale-down
+     math knows about the extra reserved row. */
+  padding: 24px 24px 48px;
+  gap: 24px;
+  scroll-behavior: smooth;
+  min-height: 0;
+  min-width: 0;
+  background-color: var(--bg-primary);
+  background-image: radial-gradient(
+    circle,
+    var(--border) 0.5px,
+    transparent 0.5px
+  );
+  background-size: 24px 24px;
+}
+
+/* Dot-grid toggle (drawer setting) — removes the radial dot pattern but
+   keeps the solid background color. */
+.viewport-area.no-dot-grid {
+  background-image: none;
+}
+
+/* Grid layout mode */
+.viewport-area.viewport-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols, 2), 1fr);
+  align-items: start;
+  justify-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  gap: 16px;
+  padding: 16px;
+}
+
+/* Sidebar hidden (fullscreen) */
+.sidebar-hidden {
+  display: none !important;
+}
+
+/* Phase 7.5 — floating "Add device" tile next to the last panel.
+   Carries its own subtle backdrop so the dashed outline + plus sign stay
+   readable when user sets a light Viewport background color (Phase 6.2). */
+.viewport-add-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 120px;
+  min-height: 200px;
+  align-self: center;
+  padding: 16px 12px;
+  border: 1.5px dashed rgba(127, 127, 127, 0.55);
+  border-radius: 16px;
+  background: rgba(127, 127, 127, 0.08);
+  color: rgba(127, 127, 127, 0.95);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.viewport-add-tile:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  transform: translateY(-2px);
+}
+
+.vat-plus {
+  font-size: 38px;
+  font-weight: 200;
+  line-height: 1;
+}
+
+.vat-label {
+  letter-spacing: 0.02em;
+}
+
+/* Hide the tile during screenshot capture so it doesn't end up in the PNG.
+   .screenshot-capture is applied throughout both takeScreenshot passes
+   (chassis-on + chassis-off) and at the start of full-page capture too,
+   so this single rule covers Device / Site / Full tab / Full page modes.
+   visibility:hidden (not display:none) keeps the flex slot — viewport-area
+   uses justify-content:center, so dropping the tile from the flex flow
+   re-centers the remaining panels and shifts them between the two capture
+   passes; rectSite measured in pass 1 would then point to empty viewport
+   bg in pass 2, producing a black strip on the left of the Site-mode PNG.
+
+   transition:none is critical: .viewport-add-tile sets transition:all,
+   and per CSS spec `visibility` uses step-end so computed visibility
+   stays `visible` for the entire transition duration (180 ms) before
+   flipping to `hidden`. captureVisibleTab fires within milliseconds of
+   class change, so without disabling the transition we capture the
+   pre-transition `visible` paint. */
+.app-layout.screenshot-capture .viewport-add-tile,
+.app-layout.fullpage-capture .viewport-add-tile,
+.viewport-add-tile.__mf_screenshot_hide {
+  /* `display: none` (not visibility:hidden) — visibility leaves the flex
+     slot occupied, which inflates `#viewport-area.getBoundingClientRect()`
+     used as the Full Tab crop region: the right edge of the captured
+     image then contains ~120px of empty white space where the hidden
+     tile sits. Removing from layout snaps viewport-area's right edge
+     tight to the last device panel. Safe — no other code reads the
+     tile's position during capture. */
+  display: none !important;
+  transition: none !important;
+}
+
+/* Floating toolbar for fullscreen mode */
+.floating-toolbar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  backdrop-filter: blur(12px);
+  animation: slideInUp 0.2s ease;
+}
+
+.ft-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ft-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Mobile Simulator — right sidebar: sections, URL input, settings, device select trigger. */
+
+/* ─── Right Sidebar ─────────────────────────────────────────────── */
+
+.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border);
+  padding: 18px 16px 16px;
+  gap: 18px;
+  overflow-y: auto;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Drag-and-drop widget reordering */
+.sidebar-section {
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+
+.drag-handle {
+  cursor: grab;
+  color: var(--text-muted);
+  font-size: 11px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  line-height: 1;
+  user-select: none;
+  letter-spacing: 1px;
+}
+
+.sidebar-section:hover .drag-handle {
+  opacity: 1;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.sidebar-section.dragging {
+  opacity: 0.4;
+  transform: scale(0.97);
+}
+
+.sidebar-section.drag-over {
+  border-top: 2px solid var(--accent);
+  margin-top: -2px;
+}
+
+/* Accent Color Picker */
+.color-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.color-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition:
+    transform 0.15s,
+    border-color 0.15s;
+}
+
+.color-dot:hover {
+  transform: scale(1.15);
+}
+
+.color-dot.active {
+  border-color: #fff;
+  transform: scale(1.1);
+}
+
+.sidebar-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Push trailing zoom value label to the right */
+.sidebar-label .zoom-value-label {
+  margin-left: auto;
+}
+
+/* Brand header — title + collapse-sidebar button */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.brand-version {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Collapse-sidebar button — surfaces the fullscreen mode (keyboard H)
+   as a discoverable click target. Toggles .sidebar-hidden on the
+   sidebar; floating-toolbar.js handles the restore from fullscreen. */
+.sidebar-collapse-btn {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-collapse-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ─── Mini-sidebar (icon strip) ─────────────────────────────────
+   Toggled via the chevron button in the brand row. Width shrinks to a
+   narrow column, only icons remain. URL / Presets / Multi-panel / Zoom
+   sections collapse entirely. Status pills retain shape but lose labels.
+   Re-expand by clicking the now-flipped chevron (›). */
+
+.sidebar.sidebar-mini {
+  width: 56px;
+  padding: 12px 6px 12px;
+  gap: 12px;
+}
+
+/* Hide the title text — keep only the chevron-toggle visible */
+.sidebar.sidebar-mini .brand-text {
+  display: none;
+}
+
+.sidebar.sidebar-mini .sidebar-brand {
+  justify-content: center;
+}
+
+/* Flip the chevron direction — now points right (expand) */
+.sidebar.sidebar-mini .sidebar-collapse-btn svg {
+  transform: rotate(180deg);
+}
+
+/* Quick actions stack vertically as icon-only square buttons */
+.sidebar.sidebar-mini .quick-actions-grid {
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+.sidebar.sidebar-mini .quick-action-btn {
+  padding: 10px 0;
+  font-size: 0; /* hide text label */
+  gap: 0;
+}
+
+.sidebar.sidebar-mini .quick-action-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Hide content sections that don't fit a 56 px column */
+.sidebar.sidebar-mini .sidebar-section:has(.preset-btn),
+.sidebar.sidebar-mini .sidebar-section.multi-device-only,
+.sidebar.sidebar-mini .sidebar-section:has(.zoom-controls),
+.sidebar.sidebar-mini .sidebar-label,
+.sidebar.sidebar-mini .status-transient {
+  display: none;
+}
+
+/* Status pills row: tight column of dot-only pills (drop labels). Keeps
+   live/dnr/count/theme indicators visible in mini state. */
+.sidebar.sidebar-mini .sidebar-status {
+  align-items: center;
+}
+
+.sidebar.sidebar-mini .status-pills {
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  align-items: center;
+}
+
+.sidebar.sidebar-mini .pill {
+  padding: 0 6px;
+  font-size: 9px;
+  letter-spacing: 0;
+}
+
+/* Rating stars in mini mode: drop the text label, stack stars tighter */
+.sidebar.sidebar-mini .rating-stars-label {
+  display: none;
+}
+
+.sidebar.sidebar-mini .rating-stars-row {
+  gap: 1px;
+}
+
+.sidebar.sidebar-mini .rating-star {
+  font-size: 13px;
+}
+
+/* Exit button shrinks to icon */
+.sidebar.sidebar-mini .btn-exit {
+  font-size: 0;
+  padding: 10px 0;
+}
+
+.sidebar.sidebar-mini .btn-exit::after {
+  content: '✕';
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Quick Actions Grid */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 4px;
+  background: var(--bg-tertiary);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.quick-action-btn:hover {
+  background: var(--bg-hover);
+}
+
+.quick-action-btn:active {
+  transform: scale(0.96);
+}
+
+.quick-action-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Grouped List (iOS Settings style) */
+.group-list {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.group-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: none;
+  background: none;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  font-size: 14px;
+  font-family: inherit;
+  text-align: left;
+}
+
+/* Phase 8 — toggle rows whose checkbox is on get an accent left bar,
+   so the user can scan which settings are active at a glance. */
+.group-item.toggle-row:has(input.toggle-input:checked) {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.group-item.toggle-row:has(input.toggle-input:checked) .gi-text {
+  color: var(--text-primary);
+}
+
+.group-item:last-child {
+  border-bottom: none;
+}
+
+.group-item:hover {
+  background: var(--bg-hover);
+}
+
+.gi-text {
+  flex: 1;
+  min-width: 0;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+.gi-chevron {
+  color: var(--text-muted);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.sidebar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Theme Switcher */
+.theme-switcher {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.theme-btn {
+  flex: 1;
+  padding: 7px 0;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+  text-align: center;
+  font-family: inherit;
+}
+
+.theme-btn:hover {
+  color: var(--text-secondary);
+}
+
+.theme-btn.active {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-status {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* Phase 3 — dashboard pills (persistent state row) */
+.status-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 10px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+.pill-theme {
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.pill-theme:hover {
+  background: var(--bg-hover);
+}
+
+/* Transient one-shot message — fades out 3 s after setStatus() */
+.status-transient {
+  min-height: 14px;
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-transient.visible {
+  opacity: 1;
+}
+
+.status-dims-hidden {
+  display: none;
+}
+
+/* Exit Button */
+.btn-exit {
+  width: 100%;
+  padding: 10px 0;
+  background: var(--bg-tertiary);
+  border: none;
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-exit:hover {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+/* Preset Buttons — now styled via .group-item */
+.preset-btn {
+  /* inherits from .group-item */
+}
+
+.preset-btn:hover {
+  background: var(--bg-hover);
+}
+
+/* "+" button in the Presets label row — opens save-preset modal */
+.preset-save-btn {
+  margin-left: auto;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+}
+
+.preset-save-btn:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+}
+
+/* "×" delete glyph inside a custom preset row */
+.preset-delete {
+  margin-left: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  opacity: 0.6;
+  transition: all 0.12s ease;
+}
+
+.preset-btn:hover .preset-delete {
+  opacity: 1;
+}
+
+.preset-delete:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* Zoom Controls */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.zoom-slider {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--bg-hover);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg-secondary);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.zoom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.zoom-value-label {
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 500;
+  float: right;
+}
+
+.zoom-fit-btn {
+  padding: 3px 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.zoom-fit-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* Custom Device Button */
+.btn-custom-device {
+  width: 100%;
+  padding: 8px 0;
+  background: var(--accent-glow);
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-custom-device:hover {
+  background: var(--accent);
+  color: #fff;
+  border-style: solid;
+}
+
+/* Custom Device Modal */
+.custom-device-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tools — now styled via .group-item */
+.tools-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.tool-btn {
+  /* inherits from .group-item */
+}
+
+.tool-btn:hover {
+  background: var(--bg-hover);
+}
+
+/* Drag Handle */
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 24px;
+  cursor: grab;
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 2px;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.drag-handle:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Drag-and-Drop (7.5) */
+.device-panel.dragging {
+  opacity: 0.4;
+  transform: scale(0.96);
+  transition: all 0.15s ease;
+}
+
+.device-panel.drag-over {
+  outline: 2px dashed var(--accent);
+  outline-offset: 4px;
+}
+
+/* Panel control disabled */
+.panel-ctrl.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ─── Device Selector ───────────────────────────────────────────── */
+
+.device-select {
+  width: 100%;
+  height: 32px;
+  padding: 0 24px 0 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.device-select:hover {
+  border-color: var(--accent);
+}
+
+/* Mobile Simulator — Settings Drawer (right slide-in).
+ * Phase 1 of UI_REFACTOR_PLAN: moves set-and-forget toggles out of the
+ * sidebar into a drawer triggered by the ⚙️ button in Quick actions.
+ */
+
+/* ─── Backdrop ──────────────────────────────────────────────────── */
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1900;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.drawer-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer-backdrop[hidden] {
+  display: block; /* keep in flow for transition; we toggle .open + remove hidden */
+}
+
+/* ─── Drawer panel ─────────────────────────────────────────────── */
+
+.settings-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 92vw;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.25);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.22s ease;
+  overflow: hidden;
+}
+
+.settings-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-primary);
+  flex-shrink: 0;
+}
+
+.drawer-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.drawer-close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawer-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.drawer-section:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.drawer-section-title {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  padding: 0 4px;
+}
+
+.drawer-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drawer-block-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 0 4px;
+}
+
+.drawer-block-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 0 4px 4px;
+  line-height: 1.45;
+}
+
+/* ─── Inline text input inside a drawer block ─────────────────── */
+
+.drawer-text-input {
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.drawer-text-input::placeholder {
+  color: var(--text-muted);
+}
+
+.drawer-text-input:focus {
+  border-color: var(--accent);
+}
+
+.url-display-block {
+  padding: 4px 4px 0;
+}
+
+/* Phase 6.2 — viewport background color picker row */
+.viewport-bg-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 0;
+}
+
+.viewport-bg-row[hidden] {
+  display: none;
+}
+
+.viewport-bg-color {
+  width: 36px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.viewport-bg-color::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.viewport-bg-color::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.viewport-bg-hex {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Conditional visibility hooks ────────────────────────────── */
+
+.ios-panel-only.hidden,
+.single-panel-only.hidden,
+.multi-device-only.hidden {
+  display: none !important;
+}
+
+/* Mobile Simulator — device picker popover, custom device modal, icon buttons,
+ * device panel chrome, HD bezel overlay + color picker. */
+
+/* ─── Device Picker (trigger + popover) ──────────────────────────── */
+
+.device-picker-trigger {
+  width: 100%;
+  height: 32px;
+  padding: 0 10px 0 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.device-picker-trigger:hover {
+  border-color: var(--accent);
+}
+
+.dpt-label {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dpt-dims {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.dpt-chevron {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.device-picker-popover {
+  position: fixed;
+  z-index: 1000;
+  width: 520px;
+  max-width: 92vw;
+  max-height: 540px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dpp-search {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dpp-search-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.dpp-search-input:focus {
+  border-color: var(--accent);
+}
+
+.dpp-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dpp-filter {
+  padding: 4px 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dpp-filter:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.dpp-filter.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.dpp-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0 10px;
+}
+
+.dpp-group-label {
+  padding: 10px 14px 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Phase 4 — device grid cards */
+.dpp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 0 10px 4px;
+}
+
+.dpp-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-tertiary);
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.15s ease;
+}
+
+.dpp-card:hover {
+  background: var(--bg-hover);
+  transform: translateY(-1px);
+}
+
+.dpp-card.active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg-tertiary));
+}
+
+.dpp-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 10px 6px 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  text-align: center;
+  cursor: pointer;
+  min-height: 110px;
+  width: 100%;
+}
+
+.dpp-card:hover .dpp-card-body {
+  color: var(--text-primary);
+}
+
+.dpp-card.active .dpp-card-body {
+  color: var(--text-primary);
+}
+
+.dpp-card-colors {
+  display: flex;
+  gap: 4px;
+  padding: 4px 6px 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.dpp-card-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease;
+  background-clip: padding-box;
+}
+
+.dpp-card-swatch:hover {
+  transform: scale(1.18);
+}
+
+.dpp-card-swatch.active {
+  border-color: var(--text-primary);
+  transform: scale(1.12);
+}
+
+.dpp-card-silhouette {
+  width: 30px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.dpp-card.active .dpp-card-silhouette {
+  color: var(--accent);
+}
+
+.dpp-card-silhouette svg {
+  width: 100%;
+  height: 100%;
+}
+
+.dpp-card-plus {
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.dpp-card-name {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.25;
+  word-break: break-word;
+  hyphens: auto;
+  color: inherit;
+  /* allow up to 2 lines, clip with ellipsis if longer */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.dpp-card-dims {
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.dpp-card.active .dpp-card-dims {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dpp-card-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #f59e0b;
+}
+
+.dpp-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s ease;
+}
+
+.dpp-item:hover {
+  background: var(--bg-hover);
+}
+
+.dpp-item.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.dpp-item.active .dpp-dims,
+.dpp-item.active .dpp-star {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dpp-name {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dpp-dims {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+}
+
+.dpp-star {
+  color: #f59e0b;
+  font-size: 10px;
+}
+
+.dpp-add-custom {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.dpp-add-custom:hover {
+  background: var(--bg-hover);
+}
+
+.dpp-empty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ─── Picker footer ("Can't find your device?" → feedback modal) ─── */
+.dpp-footer {
+  padding: 6px 8px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  flex-shrink: 0;
+}
+
+.dpp-footer-link {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.dpp-footer-link:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.dpp-footer-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.dpp-footer-text {
+  flex: 1;
+}
+
+.dpp-footer-arrow {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.dpp-footer-link:hover .dpp-footer-arrow {
+  color: var(--accent);
+  transform: translateX(2px);
+}
+
+/* ─── Custom Device Modal ────────────────────────────────────────── */
+
+.custom-device-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cdm-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.cdm-dialog {
+  position: relative;
+  width: min(420px, calc(100vw - 32px));
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cdm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cdm-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cdm-close {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cdm-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.cdm-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cdm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.cdm-field-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding-left: 2px;
+}
+
+.cdm-input {
+  height: 34px;
+  padding: 0 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+  -moz-appearance: textfield;
+}
+
+.cdm-input::-webkit-inner-spin-button,
+.cdm-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cdm-input:focus {
+  border-color: var(--accent);
+}
+
+.cdm-row {
+  display: flex;
+  gap: 10px;
+}
+
+.cdm-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding-left: 2px;
+}
+
+.cdm-platform-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cdm-platform-row {
+  display: flex;
+  gap: 6px;
+}
+
+.cdm-platform-opt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.cdm-platform-opt:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.cdm-platform-opt input[type='radio'] {
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+.cdm-platform-opt:has(input[type='radio']:checked) {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.cdm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+
+.cdm-btn {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 6px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cdm-btn.cdm-btn-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.cdm-btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.cdm-btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+.cdm-btn-secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.cdm-btn-secondary:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.cdm-btn.cdm-btn-error {
+  background: #ef4444 !important;
+  color: #fff !important;
+}
+
+/* Icon-only variant — square, single SVG centered */
+.cdm-btn.cdm-btn-icon {
+  width: 34px;
+  padding: 0;
+}
+
+.cdm-btn.cdm-btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Format size suffix shown after PNG / WEBP label */
+.cdm-btn .btn-size {
+  margin-left: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Icon Buttons ──────────────────────────────────────────────── */
+
+.btn-icon {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-icon:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.btn-icon.active {
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.btn-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ─── Device Panel ──────────────────────────────────────────────── */
+
+.device-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+  animation: panelFadeIn 0.3s ease-out;
+}
+
+@keyframes panelFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Panel header: drag handle + device select + spacer + rotate + ⋮ + close */
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.panel-header-spacer {
+  flex: 1;
+}
+
+/* Phase 2 — hover-reveal drag handle. Hidden when the user isn't hovering
+   the panel header so the default surface stays quiet. */
+.panel-header .drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 18px;
+  cursor: grab;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.panel-header:hover .drag-handle,
+.device-panel.dragging .drag-handle {
+  opacity: 1;
+}
+
+.panel-header .drag-handle:active {
+  cursor: grabbing;
+  color: var(--text-primary);
+}
+
+/* Phase 2 — overflow ⋮ dropdown */
+.panel-overflow-menu {
+  position: fixed;
+  z-index: 1500;
+  min-width: 200px;
+  padding: 4px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.panel-overflow-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.panel-overflow-item:hover {
+  background: var(--bg-hover);
+}
+
+.poi-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+}
+
+.poi-label {
+  flex: 1;
+}
+
+.panel-device-select {
+  height: 26px;
+  padding: 0 22px 0 8px;
+  font-size: 11px;
+  background-size: 8px 5px;
+  border-radius: 6px;
+}
+
+/* ─── HD Bezel Overlay ─────────────────────────────────────────── */
+
+.hd-bezel-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* ─── HD Bezel Device (no CSS frame, only WebP image) ──────────── */
+
+.hd-bezel-device {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.hd-bezel-device .device-screen {
+  display: block;
+  border: none;
+}
+
+/* ─── Bezel Color Picker ───────────────────────────────────────── */
+
+.bezel-color-picker {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.bezel-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.bezel-color-dot:hover {
+  transform: scale(1.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.bezel-color-dot.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+  transform: scale(1.15);
+}
+
+.panel-close {
+  width: 24px !important;
+  height: 24px !important;
+  flex-shrink: 0;
+}
+
+.panel-close svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Per-panel controls (rotate, dark mode) */
+.panel-ctrl {
+  width: 22px !important;
+  height: 22px !important;
+  flex-shrink: 0;
+  padding: 0 !important;
+}
+
+.panel-ctrl svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Frame wrapper — constrains scaled frame to correct layout size */
+.frame-wrapper {
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Mobile Simulator — browser chrome bars: status, address, toolbars, tab bars,
+ * Android gesture nav, iPad-specific layout. */
+
+/* ═══════════════════════════════════════════════════════════════════
+   VIEWPORT-FLEX RENDERER STYLES + chrome bar elements.
+   `.mm-viewport` hosts status bar, iframe wrapper, and footer as flex
+   children inside one clip-path region — the renderer for every device
+   (catalogue + Custom). Status bars, toolbars, home indicator, iPad tab
+   bar — see sections below.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Flex-column viewport: status bar + iframe wrapper + footer as flex children
+   inside one clip-path region. iframe-wrapper auto-stretches via flex-grow:1
+   so scroll-collapse just shrinks the footer; the iframe follows for free. */
+.mm-viewport .mm-header,
+.mm-viewport .mm-footer {
+  /* Override the legacy `.browser-chrome-top { position:absolute }` rule
+     when these bars are mounted as flex children. */
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+}
+
+.mm-viewport .mm-iframe-wrapper {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  background: #fff;
+}
+
+.mm-viewport .mm-iframe-wrapper iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: 0;
+  display: block;
+}
+
+/* Apple Safari chrome palette (extracted from webmobilefirst, validated
+   through 1M+ users). Note: --safari-blue is #017aff — webmobilefirst's
+   deliberate one-hex-digit shift from Apple's brand #007AFF (matches what
+   they ship to all users; visually identical at icon size). */
+:host {
+  --safari-blue: #017aff;
+  --safari-inactive: #cbcbcb;
+  /* Toolbar icon tint — Marat-preferred "classic Apple grey" (#8e8e93 =
+     Apple's `secondaryLabel` / system grey 2). Webmobilefirst uses
+     `--safari-blue` here; Marat asked for the muted Apple Safari look
+     instead. Applies to all bottom toolbars (Tab Bar mode, Single Tab
+     mode) and the landscape consolidated bar. */
+  --safari-toolbar-grey: #8e8e93;
+  --safari-dark-icon: #eeeeef;
+  --safari-chrome-bg: #f9f9f9;
+  --safari-chrome-border: #e4e4e4;
+  --safari-pill-bg: #e8e8e9;
+  --safari-pill-bg-dark: rgba(238, 238, 239, 0.19);
+}
+
+/* No-frame mode */
+.no-frame-wrap {
+  display: inline-block;
+}
+
+/* ─── Browser Chrome: Top Bar (Status + Address) ─────────────────── */
+
+.browser-chrome-top {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+  /* Webmobilefirst chrome grey (#f9f9f9) — slightly warmer than Apple's
+     #f5f5f7. Under the transparent status bar this gives dark icons a
+     readable surface. Only consumed by the Custom-device CSS frame path;
+     viewport-flex mounts chrome bars inside .mm-viewport without this. */
+  background: var(--safari-chrome-bg);
+}
+
+.chrome-status-bar {
+  display: flex;
+  align-items: center;
+  /* space-between is the fallback distribution for builders that don't wrap
+     their content in .sb-left / .sb-right (iPad + Android status bars). iOS
+     buildStatusBar uses the wrappers and overrides this via the .sb-left /
+     .sb-right rules below — two centred 36% halves around the OLED Island. */
+  justify-content: space-between;
+  /* Default height (Dynamic Island) — buildStatusBar overrides inline via
+     getDeviceMetrics() which computes height as % of viewport.height per
+     device family. Fallback values per tier in FRAME_DESIGN_DEFAULTS. */
+  height: 54px;
+  /* No padding-top — `align-items: center` alone centres the clock/icons
+     vertically in the status bar, which lands beside the Dynamic Island
+     centre (matching real iOS + webmobilefirst, which has no padding-top
+     either). A fixed padding-top previously pushed the clock 7px down, so on
+     every Island device the clock floated 8-14px BELOW the Island centre
+     instead of beside it (the misalignment Marat noticed). */
+  /* iOS Safari draws the status bar transparently over the page, with
+     icons in label colour. Light sites read dark icons on white; dark
+     pages would need adaptive tinting (Phase C — applied via _applyThemeColor
+     from <meta name="theme-color">). */
+  color: #1c1c1e;
+  background: transparent;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Segoe UI', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  /* Smooth Phase C theme-color transitions — match webmobilefirst's
+     transition: background-color .4s ease, color .4s ease on the header. */
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease;
+  /* 1 px border-bottom in same colour as bg — hides subpixel seam against
+     URL bar / iframe below. Apple uses this trick for translucent bars
+     resting on opaque content. */
+  border-bottom: solid 1px transparent;
+  /* Adjust margin to overlap that 1px so total height stays canonical. */
+  margin-bottom: -0.5px;
+}
+
+/* Notch tier (iPhone X–13, 17e) — 44 px high. Inline height from
+   buildStatusBar wins; centring is handled by align-items:center (no
+   padding-top, same reason as the Island tier above). */
+
+/* Phase C theme-color icon variants (applied by url-collapse mixin from
+   <meta name="theme-color"> luminance). Webmobilefirst uses --ios-icon-color
+   var to drive icon fill via SVG `fill: var(--ios-icon-color)` — we set it
+   on `color` which cascades through `currentColor` SVGs. */
+.chrome-status-bar--dark-icons {
+  color: #000;
+}
+.chrome-status-bar--light-icons {
+  color: #fff;
+}
+/* SVG fill cascades from `color`; ensure smooth transition matching parent. */
+.chrome-status-bar svg,
+.chrome-status-bar svg * {
+  transition:
+    fill 0.4s ease,
+    stroke 0.4s ease;
+}
+
+/* Classic tier (iPhone SE, 8) — 20 px high, single-line layout. No
+   Dynamic Island gap → .sb-left / .sb-right collapse to natural width
+   so time sits flush-left and icons flush-right (pre-iPhone X layout). */
+.chrome-status-bar--classic {
+  padding: 2px 16px 0;
+  font-size: 12px;
+}
+.chrome-status-bar--classic .sb-left,
+.chrome-status-bar--classic .sb-right {
+  width: auto;
+  flex: 0 1 auto;
+}
+.chrome-status-bar--classic .sb-time {
+  font-size: 12px;
+}
+.chrome-status-bar--classic .sb-icon {
+  transform: scale(0.85);
+}
+
+.sb-time {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Two-column halves around the Dynamic Island / notch.
+   webmobilefirst's iOS18 header (data-v-0f359632) uses fixed 36% width
+   columns with their contents centred — time floats at the centre of the
+   left half, icons at the centre of the right half. The remaining ~28%
+   in the middle is where Apple OLED puts the Island. */
+.sb-left,
+.sb-right {
+  width: 36%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sb-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sb-icon {
+  opacity: 0.9;
+}
+
+.sb-battery {
+  margin-left: 2px;
+}
+
+.chrome-url-text {
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 400;
+}
+
+/* ─── Browser Chrome: Bottom Toolbar ─────────────────────────────── */
+
+.browser-chrome-bottom {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+  background: #1c1c1e;
+  /* No border-radius — Custom-device CSS frame mode sets per-device radius
+     inline via panel.js; viewport-flex relies on parent clip-path. */
+}
+
+/* Tab Bar mode action row (back/forward/share/bookmark/window).
+   webmobilefirst `footer .actions` geometry (data-v-6e8a69e4):
+   `display:flex; justify-content:space-between; margin:3px 24px;
+   align-items:flex-end` — icons sit at the bottom of the row so the
+   visual baseline aligns with the home indicator below. */
+.chrome-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 50px;
+  margin: 0 24px;
+  padding-bottom: 3px;
+  /* Classic Apple grey for action icons — Marat preference over the
+     blue tint webmobilefirst (and real iOS Safari) uses. */
+  color: var(--safari-toolbar-grey);
+}
+
+/* Inactive toolbar icons (e.g. back when no history) */
+.chrome-toolbar .chrome-nav-btn--disabled,
+.chrome-toolbar svg.inactive {
+  color: var(--safari-inactive);
+  opacity: 1;
+}
+
+.chrome-toolbar svg {
+  cursor: pointer;
+}
+
+.chrome-home-indicator {
+  width: 120px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+  margin: 2px auto 4px;
+}
+
+/* ─── iPhone Safari iOS 15+: bottom URL bar + light toolbar ───────── */
+.browser-chrome-bottom--ios {
+  background: var(--safari-chrome-bg);
+}
+
+/* iOS18 footer pill row — mirrors webmobilefirst `.safari-header` (data-v-
+   6e8a69e4). Row height = `$position.midHeight` (JS-controlled, 50→23 on
+   scroll). 22 px horizontal padding, no vertical padding — the pill sits at
+   row bottom via align-items:flex-end, leaving the 7-px slack above for the
+   transform translateY(14) to slide content downward at collapse. */
+.chrome-bottom-urlbar {
+  height: 50px;
+  padding: 0 22px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Pill container — webmobilefirst `.search-bar`. Transparent itself; the
+   grey fill lives in `.chrome-pill-bg` so JS can fade just that layer to
+   `opacity: 0` at full scroll-collapse, leaving the lock + hostname text
+   floating on the footer's light-grey background. */
+.chrome-bottom-url-field {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  height: 43px;
+  border-radius: 9px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #1c1c1e;
+  font-size: 15px;
+  background: transparent;
+}
+
+/* Fading grey fill behind pill content. Painted first via DOM order — sits
+   under the centred lock+hostname and the absolutely-positioned letter +
+   refresh siblings. */
+.chrome-pill-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--safari-pill-bg);
+  border-radius: inherit;
+}
+
+/* Lock + hostname — webmobilefirst `.url`. Centred flex child, sized to fit
+   between the absolutely-positioned `.letter` (left:14) and `.refresh`
+   (right:16). 62 = 14 + 21 (letter width) + 16 + 16 (refresh left + width)
+   minus a couple-px overlap budget — same value webmobilefirst hard-codes. */
+.chrome-bottom-url-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100% - 62px);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.chrome-bottom-url-content .chrome-url-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 400;
+  color: #1c1c1e;
+}
+
+.chrome-bottom-url-content svg {
+  color: rgba(60, 60, 67, 0.6);
+  flex-shrink: 0;
+}
+
+/* "Aa" page-settings leading glyph — webmobilefirst `.letter`, absolutely
+   positioned at left:14, bottom:14 so it's out of flex flow. Layout-wise
+   it doesn't compete with the centred URL content for space, which is why
+   their address bar reads "naturally wide" while a flex-children variant
+   crams the centre into a narrow strip. */
+.chrome-url-pagesettings {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+}
+
+/* Reload icon — webmobilefirst `.refresh`, absolutely positioned at
+   right:16, bottom:12. Same rationale as `.chrome-url-pagesettings` above. */
+.chrome-bottom-reload {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  color: rgba(60, 60, 67, 0.6);
+}
+
+.browser-chrome-bottom--ios .chrome-toolbar {
+  color: var(--safari-toolbar-grey);
+  background: transparent;
+}
+
+.browser-chrome-bottom--ios .chrome-home-indicator {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* ─── iPhone Safari Single Tab layout (addressBarPosition='top') ─────
+   - Top URL pill row sits directly under the status bar (light surface).
+   - Bottom action row is compact (5 evenly-spaced glyphs, no URL pill). */
+
+.chrome-top-urlbar {
+  padding: 6px 12px 8px;
+  background: var(--safari-chrome-bg);
+  position: relative;
+}
+
+.chrome-toolbar--single-tab {
+  justify-content: space-between;
+  padding: 6px 24px 0;
+  height: 44px;
+}
+
+/* Single Tab consolidated row mirrors webmobilefirst's
+   `.safari-header .actions svg { min-width: 37px }` — gives each glyph an
+   even cell so 5 icons distribute uniformly via space-between. */
+.chrome-toolbar--single-tab svg {
+  flex-shrink: 0;
+  min-width: 37px;
+}
+
+/* Plus button in Single Tab toolbar — circular pill highlight,
+   real Safari treats it as the primary "new tab" action. */
+.chrome-tb-circle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(120, 120, 128, 0.16);
+  flex-shrink: 0;
+}
+
+/* ─── iPhone Safari iOS landscape: single compact URL toolbar at top ── */
+.browser-chrome-top--ios-landscape {
+  background: var(--safari-chrome-bg);
+  color: var(--safari-toolbar-grey);
+  /* Must match IOS_CHROME_HEIGHTS.landscape in src/sim/chrome/ios.js (50px,
+     webmobilefirst iOS 14 header geometry). Mismatch opens a dark gap
+     between toolbar bottom and iframe top. */
+  height: 50px;
+  border-bottom: 1px solid var(--safari-chrome-border);
+}
+
+/* Landscape consolidated bar — mirrors webmobilefirst's
+   `.safari-header > .wrapper` (data-v-06b168b1).
+   Layout: 3-zone flex row. Left actions and right actions both
+   `flex-grow:1` so they expand equally around a fixed-max-width URL
+   pill in the centre. Each action svg gets `min-width: 37px` so the
+   three glyphs distribute evenly via space-around inside its zone. */
+.chrome-landscape-toolbar {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+  color: var(--safari-toolbar-grey);
+}
+
+.chrome-landscape-actions {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.chrome-landscape-actions svg {
+  min-width: 37px;
+}
+
+.chrome-landscape-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Apple greys out the forward arrow until the user has navigated back —
+   webmobilefirst hard-codes `class="inactive"` on it in the template. */
+.chrome-landscape-btn--inactive {
+  color: var(--safari-inactive);
+}
+
+/* Compact pill variant for landscape (their `.safari-header .search-bar`
+   height: 33 vs portrait's 43). Reuses the portrait pill's DOM and most
+   styles via the base `.chrome-bottom-url-field` selector; this modifier
+   trims the height, freezes flex-shrink, and re-positions the absolute
+   letter / reload to match their data-v-06b168b1 insets. */
+.chrome-bottom-url-field--landscape {
+  height: 33px;
+  flex-shrink: 0;
+  margin: 0 6px;
+}
+
+.chrome-bottom-url-field--landscape .chrome-url-pagesettings {
+  left: 10px;
+  bottom: 4px;
+}
+
+.chrome-bottom-url-field--landscape .chrome-bottom-reload {
+  right: 8px;
+  bottom: 7px;
+}
+
+.chrome-url-pagesettings {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: rgba(60, 60, 67, 0.6);
+}
+
+/* "aA" page-settings letter — Apple Safari URL field leading glyph.
+   Small "a" at base size + big "A" 1.2em sits next to it. Renders as
+   "aA" — Apple's text indicator for Page Settings menu. */
+.chrome-url-letter {
+  display: inline-flex;
+  align-items: baseline;
+  color: rgba(60, 60, 67, 0.85);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.chrome-url-letter-big {
+  font-size: 1.2em;
+  margin-right: -1px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ANDROID CHROME — webmobilefirst mirror (scope data-v-2871b781)
+   Single <header class="mm-android-header"> with .mm-android-statusbar
+   (32 px) + .mm-android-urlrow (50 px). Light surface, Material pill
+   capsule. Theme-color cascades via .mm-android-header--light/--dark
+   classes flipping --mm-android-icon-color CSS custom prop.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.mm-android-header {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: var(--mm-android-icon-color);
+  font-family: 'system-ui', Avenir, Arial, sans-serif;
+  position: relative;
+  /* Mirror webmobilefirst transition: smooth theme-color crossfade. */
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
+  pointer-events: none;
+}
+
+/* Light theme = light bg → dark icons. Dark theme = dark bg → light icons. */
+.mm-android-header--light {
+  --mm-android-icon-color: #000;
+}
+.mm-android-header--dark {
+  --mm-android-icon-color: #fff;
+}
+
+.mm-android-header svg {
+  fill: var(--mm-android-icon-color);
+  transition:
+    fill 0.4s ease,
+    stroke 0.4s ease;
+}
+
+/* ─── Status bar (.mm-android-statusbar — webmobilefirst .device-header) ─ */
+.mm-android-statusbar {
+  flex-shrink: 0;
+  height: 32px;
+  display: flex;
+  font-size: 14px;
+  opacity: 0.9;
+  position: relative;
+  z-index: 5;
+  transition: all 0.3s ease;
+  padding: 0 23px 0 23px;
+  font-weight: 400;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Per-device punch-hole compensation. Pixel 5's chassis WebP has a left-
+   corner camera lens (logical center ~(30, 26), radius ~11) that overlaps
+   default time text. Webmobilefirst's `.device-header.google-pixel-5`
+   pushes content right by 51 px and grows height to 42 px — mirrored
+   verbatim. viewport.js bumps topH 82 → 92 in lockstep to preserve the
+   URL row's 50 px slot. */
+.mm-android-statusbar.is-pixel-5 {
+  padding: 17px 23px 0 51px;
+  height: 42px;
+}
+
+/* Pixel 9 series corner-curve safe-area. Phone-simulator chassis imports
+   have larger OLED corner radii (49-60 CSS) vs older Pixels (~27). With
+   status-bar content vertically centered at y=16 and padding 23, the time
+   text sits only 6 px from the rounded-corner curve edge — visually
+   "almost touching". Bump padding to 32 so time/battery have ~15 px
+   clearance from the curve (matches the corner-radius safe-area pattern
+   used by Apple HIG for iOS Status Bar). */
+.mm-android-statusbar.is-pixel-9,
+.mm-android-statusbar.is-pixel-9-pro,
+.mm-android-statusbar.is-pixel-9-pro-xl,
+/* Xiaomi 17 / 17 Ultra have large rounded OLED corners (path radius 60-64)
+   like the Pixel 9 series, so the default 23px padding lets the time /
+   battery sit almost on the corner curve — same 32px safe-area fix.
+   LONGHAND (not the `padding` shorthand) so the per-device padding-top
+   below — which drops the clock onto the camera centre line — is NOT reset
+   to 0 by this horizontal-only safe-area rule. */
+.mm-android-statusbar.is-xiaomi-17,
+.mm-android-statusbar.is-xiaomi-17-ultra {
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+/* ─── Per-device camera-centre alignment ─────────────────────────────────
+   On devices with a centre punch-hole camera (painted into the chassis
+   WebP), the default 32px status bar centres the clock/icons at y=16 — ABOVE
+   the camera, which sits deeper (centre y≈20-45 CSS). The clock then floats
+   over the lens and reads small, instead of sitting beside it like a real
+   phone (Marat's Samsung photo: clock on the lens centre line). Mirror
+   webmobilefirst's google-pixel-5 pattern (height 42 + padding-top 17): grow
+   the bar height and add padding-top so the vertically-centred clock —
+   centre = (height + padding-top)/2 — lands on the camera centre. Camera
+   depths measured via scripts/audit-android-chrome.py (alpha channel). The
+   total top chrome (status bar + URL row) stays within the per-device topH
+   in viewport.js, and the bottom-aligned URL pill still clears. Tuned down
+   from the raw cam-bottom math (cameras are 24-50px wide, so their centre is
+   higher than bottom−6); verify visually vs data/ref-photos and nudge ±2px. */
+/* :not(--land) — these only apply in PORTRAIT. In landscape the camera is on
+   the side, so growing the TOP status bar would just leave an empty tall
+   strip (the bug Marat saw on Pixel 9 Pro landscape). */
+.mm-android-statusbar.is-galaxy-s22:not(.mm-android-statusbar--land) {
+  padding-top: 9px;
+}
+.mm-android-statusbar.is-galaxy-z-flip6:not(.mm-android-statusbar--land) {
+  padding-top: 12px;
+}
+.mm-android-statusbar.is-pixel-8:not(.mm-android-statusbar--land) {
+  padding-top: 12px;
+}
+.mm-android-statusbar.is-galaxy-s25-ultra:not(.mm-android-statusbar--land) {
+  padding-top: 12px;
+  height: 39px;
+}
+.mm-android-statusbar.is-xiaomi-17-ultra:not(.mm-android-statusbar--land) {
+  padding-top: 11px;
+  height: 49px;
+}
+.mm-android-statusbar.is-pixel-8-pro:not(.mm-android-statusbar--land) {
+  padding-top: 11px;
+  height: 50px;
+}
+.mm-android-statusbar.is-galaxy-s26-ultra:not(.mm-android-statusbar--land) {
+  padding-top: 11px;
+  height: 52px;
+}
+.mm-android-statusbar.is-xiaomi-17:not(.mm-android-statusbar--land) {
+  padding-top: 11px;
+  height: 53px;
+}
+.mm-android-statusbar.is-pixel-9:not(.mm-android-statusbar--land) {
+  padding-top: 11px;
+  height: 58px;
+}
+.mm-android-statusbar.is-pixel-9-pro:not(.mm-android-statusbar--land) {
+  padding-top: 11px;
+  height: 66px;
+}
+.mm-android-statusbar.is-pixel-9-pro-xl:not(.mm-android-statusbar--land) {
+  padding-top: 14px;
+  height: 71px;
+}
+
+.mm-android-statusbar__left,
+.mm-android-statusbar__right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mm-android-statusbar__right {
+  margin-left: auto;
+  gap: 0;
+}
+
+.mm-android-network {
+  margin-right: 4px;
+}
+
+.mm-android-battery-text {
+  font-size: 12px;
+}
+
+.mm-android-battery {
+  margin-left: 4px;
+}
+
+/* ─── URL row (.mm-android-urlrow — webmobilefirst .chrome-header) ─── */
+.mm-android-urlrow {
+  flex: 1;
+  position: relative;
+  /* Material elevation — light shadow under the chrome surface. */
+  box-shadow: 1px 4px 5px 0 rgba(0, 0, 0, 0.0784313725);
+}
+
+.mm-android-urlrow__wrapper {
+  padding: 9px;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.mm-android-action {
+  flex: 0 0 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+/* URL pill (.mm-android-pill — webmobilefirst .search-bar). Light theme
+   gets a translucent grey fill (#d9d9d9 at ~32 % alpha), dark theme gets
+   solid #313745 (their exact colour). */
+.mm-android-pill {
+  width: 100%;
+  height: 37px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 15px;
+  overflow: hidden;
+  margin: 0 7px;
+  background: hsla(0, 0%, 85.1%, 0.3215686275);
+}
+
+.mm-android-header--dark .mm-android-pill {
+  background: #313745;
+}
+
+.mm-android-pill__url {
+  max-width: calc(100% - 10px);
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  color: var(--mm-android-icon-color);
+}
+
+.mm-android-pill__host {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--mm-android-icon-color);
+}
+
+.mm-android-cadena {
+  vertical-align: -1px;
+  margin: 0 2px 0 7px;
+  flex-shrink: 0;
+}
+
+/* Page-load progress bar — 2 px bottom strip animated by class flips from
+   ua-override.js readystate postMessage. Mirrors webmobilefirst's `.loading
+   .init / .interactive / .complete` keyframes. Final width:0 on complete
+   makes the bar disappear after the fill animation ends. */
+.mm-android-loading {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: #333;
+  width: 0;
+}
+.mm-android-urlrow.is-loading-init .mm-android-loading {
+  animation: mm-android-load-init 2s ease;
+  width: 40%;
+}
+.mm-android-urlrow.is-loading-interactive .mm-android-loading {
+  animation: mm-android-load-interactive 1s ease;
+  width: 70%;
+}
+.mm-android-urlrow.is-loading-complete .mm-android-loading {
+  animation: mm-android-load-complete 1s ease;
+  width: 0;
+}
+@keyframes mm-android-load-init {
+  0% {
+    width: 0;
+  }
+  to {
+    width: 40%;
+  }
+}
+@keyframes mm-android-load-interactive {
+  0% {
+    width: 40%;
+  }
+  to {
+    width: 70%;
+  }
+}
+@keyframes mm-android-load-complete {
+  0% {
+    width: 70%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* iPad status bar — mirrors webmobilefirst's `.device-header.tablet` rule
+   (data-v-06b168b1): height 25 px with 12 px horizontal padding. Smaller
+   than iPhone's because iPad fits more in less vertical space. */
+.chrome-status-bar--tablet {
+  height: 25px;
+  padding: 4px 12px 0;
+  font-size: 12px;
+}
+.chrome-status-bar--tablet .sb-time {
+  font-size: 12px;
+}
+.chrome-status-bar--tablet .sb-icon {
+  transform: scale(0.85);
+}
+
+/* ─── iPad Tab Bar ─────────────────────────────────────────────────
+   Real iPad Safari iOS 17/18 layout: light chrome surface for the
+   whole header (matches iPhone chrome colour palette), tab pill is a
+   rounded grey rect (#e8e8e9, same as URL pill) with the favicon +
+   title + close × inside, new-tab `+` glyph on the right. Webmobile-
+   first iOS14 header drops the tab strip entirely; we render it as
+   real iPad Safari does because Marat's reference screenshot shows
+   the strip and it conveys "iPad-ness" to the user. */
+.chrome-tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 0;
+  background: var(--safari-chrome-bg);
+}
+
+.chrome-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--safari-pill-bg);
+  border-radius: 9px;
+  padding: 6px 10px;
+  color: #1c1c1e;
+  font-size: 13px;
+  max-width: 240px;
+  min-width: 0;
+}
+
+.chrome-tab--active {
+  background: var(--safari-pill-bg);
+  color: #1c1c1e;
+}
+
+.chrome-tab-favicon {
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.chrome-tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.chrome-tab-close {
+  flex-shrink: 0;
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  color: #1c1c1e;
+}
+
+.chrome-tab-new {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  color: var(--safari-toolbar-grey);
+}
+
+/* ─── iPad Address Bar (full Safari toolbar) ─────────────────────────
+   3 left actions (back, forward, reload) + URL pill (flex-grow) +
+   N right actions (mic, share, tabs, more). Light chrome bg matches
+   real iPad Safari iOS 17/18. Action icons inherit grey from the
+   parent rule below. */
+.chrome-address-bar--tablet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 10px;
+  background: var(--safari-chrome-bg);
+  color: var(--safari-toolbar-grey);
+}
+
+.chrome-url-field--tablet {
+  flex: 1;
+  min-width: 0;
+  height: 33px;
+  background: var(--safari-pill-bg);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  color: #1c1c1e;
+  font-size: 14px;
+}
+
+.chrome-url-field--tablet .chrome-url-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #1c1c1e;
+}
+
+.chrome-nav-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  /* Inherit colour from the parent toolbar — `.chrome-address-bar--tablet`
+     and landscape `.chrome-landscape-toolbar` both set `color:
+     var(--safari-toolbar-grey)`. The legacy `rgba(255,255,255,0.7)` was
+     a leftover from the dark-theme iPad address bar; on the new light
+     chrome it rendered icons invisible. */
+}
+
+.chrome-nav-btn--disabled {
+  opacity: 0.3;
+}
+
+/* ─── Per-panel device-chrome theme — device system chrome only ───────
+   The per-device theme button (panel header) cycles Auto → Dark → Light and
+   adds `.panel-device-dark` or `.panel-device-light` to the panel root (Auto =
+   no class, follows the site's <meta theme-color>). It repaints ONLY the
+   simulated device system chrome (iOS/Android status bar + URL bar) — the SITE
+   inside the iframe is never touched. Dark colours are copied verbatim from
+   webmobilefirst (bar #282828, Android pill #313745, white icons); Light uses
+   the default light-chrome palette. `!important` overrides the inline
+   theme-color tint that url-collapse.js applies from the page's theme-color,
+   so the user's explicit choice wins (and _applyThemeColor bails entirely when
+   chromeTheme !== 'auto', so a site re-posting its colour can't fight back). */
+
+/* iOS status bar */
+.panel-device-dark .chrome-status-bar {
+  background: #282828 !important;
+  border-bottom-color: #282828 !important;
+  color: #fff !important;
+}
+
+/* iOS bottom URL bar (footer) + top URL bar (single-tab) + tablet address bar */
+.panel-device-dark .browser-chrome-bottom--ios,
+.panel-device-dark .browser-chrome-top,
+.panel-device-dark .chrome-address-bar--tablet,
+.panel-device-dark .chrome-landscape-toolbar {
+  background: #282828 !important;
+  border-color: #3a3a3c !important;
+}
+
+/* iOS URL pill fill + text */
+.panel-device-dark .chrome-pill-bg {
+  background: #3a3a3c !important;
+}
+.panel-device-dark .chrome-bottom-url-field,
+.panel-device-dark .chrome-bottom-url-content,
+.panel-device-dark .chrome-url-text,
+.panel-device-dark .chrome-url-field--tablet .chrome-url-text {
+  color: #fff !important;
+}
+
+/* Android header + URL row + pill */
+.panel-device-dark .mm-android-header {
+  background: #282828 !important;
+  --mm-android-icon-color: #fff !important;
+}
+.panel-device-dark .mm-android-pill {
+  background: #313745 !important;
+  color: #fff !important;
+}
+
+/* Viewport + iframe wrapper background. These default to #fff inline (set in
+   render/viewport.js). In dark mode any sliver the iframe doesn't cover — the
+   landscape safe-area padding (left/right), the scroll-collapse gap under the
+   footer, the 1px seam under the chrome bars — would flash WHITE. Paint them
+   black so the device reads as a phone in dark mode edge-to-edge. !important
+   beats the inline #fff (inline has no !important). */
+.panel-device-dark .mm-viewport,
+.panel-device-dark .mm-iframe-wrapper {
+  background: #000 !important;
+}
+
+/* ─── Per-panel LIGHT (force) — mirror of dark, default light palette ──
+   Forces the light-chrome look regardless of the site's theme-color (needed
+   for dark sites like github whose dark theme-color would otherwise keep the
+   bars dark in 'light' mode). Values are the default light-chrome colours
+   (status #f5f5f7 / dark icons, URL bar #f9f9f9, pill #e8e8e9). */
+.panel-device-light .chrome-status-bar {
+  background: #f5f5f7 !important;
+  border-bottom-color: #f5f5f7 !important;
+  color: #1c1c1e !important;
+}
+.panel-device-light .browser-chrome-bottom--ios,
+.panel-device-light .browser-chrome-top,
+.panel-device-light .chrome-address-bar--tablet,
+.panel-device-light .chrome-landscape-toolbar {
+  background: var(--safari-chrome-bg) !important;
+  border-color: var(--safari-chrome-border) !important;
+}
+.panel-device-light .chrome-pill-bg {
+  background: var(--safari-pill-bg) !important;
+}
+.panel-device-light .chrome-bottom-url-field,
+.panel-device-light .chrome-bottom-url-content,
+.panel-device-light .chrome-url-text,
+.panel-device-light .chrome-url-field--tablet .chrome-url-text {
+  color: #1c1c1e !important;
+}
+.panel-device-light .mm-android-header {
+  background: #fff !important;
+  --mm-android-icon-color: #000 !important;
+}
+.panel-device-light .mm-android-pill {
+  background: hsla(0, 0%, 85.1%, 0.32) !important;
+  color: #1c1c1e !important;
+}
+
+/* ── Desktop (MacBook) browser chrome ──────────────────────────────────
+   macOS Chrome-style bar: tab strip (traffic-lights + active tab) on top,
+   address/navigation row below. Values copied from phone-simulator's desktop
+   chrome (tab-bar #E8E9ED, white URL row, pill address field). Two rows total
+   ≈ DESKTOP_CHROME_H (72px) in src/sim/chrome/desktop.js. */
+.browser-chrome-top--desktop {
+  display: flex;
+  flex-direction: column;
+  background: #e8e9ed;
+}
+
+.chrome-desktop-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 0;
+  background: #e8e9ed;
+  height: 38px;
+  box-sizing: border-box;
+}
+
+.chrome-traffic-lights {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  margin-right: 6px;
+}
+
+.chrome-desktop-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border-radius: 8px 8px 0 0;
+  padding: 7px 11px;
+  color: #1c1c1e;
+  font-size: 13px;
+  min-width: 200px;
+  max-width: 280px;
+  height: 30px;
+  box-sizing: border-box;
+}
+
+.chrome-desktop-tab .chrome-tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.chrome-desktop-tab .chrome-tab-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 11px;
+  height: 11px;
+  opacity: 0.45;
+}
+
+.chrome-desktop-newtab {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  opacity: 0.55;
+}
+
+.chrome-desktop-urlrow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 5px 16px;
+  background: #fff;
+  height: 34px;
+  box-sizing: border-box;
+}
+
+/* Thin vertical separator between the extensions puzzle and the profile/user
+   icon, matching real Chrome. Negative margins pull it tighter than the row's
+   16px gap so it reads as a divider, not a third gap. */
+.chrome-desktop-divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 18px;
+  background: #dadce0;
+  margin: 0 -4px;
+}
+.panel-device-dark .chrome-desktop-divider {
+  background: #4a4d51;
+}
+
+.chrome-desktop-urlrow .chrome-nav-btn {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Icons use currentColor (fill/stroke) — set the bar's icon colour
+     (phone-sim's #5F6368) so back/forward/reload/more are actually visible. */
+  color: #5f6368;
+}
+.chrome-desktop-urlrow .chrome-nav-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+.chrome-desktop-urlrow .chrome-nav-btn--disabled {
+  opacity: 0.4;
+}
+/* New-tab "+" and tab close inherit currentColor — give them a colour too. */
+.chrome-desktop-newtab,
+.chrome-desktop-tab .chrome-tab-close {
+  color: #5f6368;
+}
+.chrome-desktop-newtab svg,
+.chrome-desktop-tab .chrome-tab-close svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.chrome-url-field--desktop svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: #5f6368;
+}
+.panel-device-dark .chrome-desktop-urlrow .chrome-nav-btn,
+.panel-device-dark .chrome-desktop-newtab,
+.panel-device-dark .chrome-desktop-tab .chrome-tab-close,
+.panel-device-dark .chrome-url-field--desktop svg {
+  color: #e6eaed;
+}
+
+.chrome-url-field--desktop {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e8e9ed;
+  border-radius: 100px;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #1c1c1e;
+}
+
+.chrome-url-field--desktop .chrome-url-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Dark theme (per-panel device dark) — phone-sim dark desktop values */
+.panel-device-dark .browser-chrome-top--desktop,
+.panel-device-dark .chrome-desktop-tabs,
+.panel-device-dark .chrome-desktop-urlrow {
+  background: #343739;
+}
+.panel-device-dark .chrome-desktop-tab {
+  background: #202125;
+  color: #fff;
+}
+.panel-device-dark .chrome-url-field--desktop {
+  background: #202125;
+  color: #fff;
+}
+
+/* Mobile Simulator — Phase F. On-screen keyboard widget styles.
+ * Mounted by panel.js inside .mm-viewport (viewport-flex renderer) or on top
+ * of the iframe for legacy CSS-frame Custom devices. Position: absolute to
+ * its container's bottom so it overlays the iframe footer rather than
+ * shrinking iframe content.
+ *
+ * Coloring matches iOS 16+ light keyboard. Android profile gets a slightly
+ * different surface tint via the platform modifier.
+ */
+
+.mobile-sim-keyboard {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6px 3px 8px;
+  background: #d1d4dc;
+  box-sizing: border-box;
+  pointer-events: none; /* visual only — never steals iframe clicks */
+  z-index: 5; /* above iframe + chrome bottom toolbar, below bezel image */
+  user-select: none;
+  font:
+    22px / 1 -apple-system,
+    BlinkMacSystemFont,
+    'SF Pro Text',
+    'Segoe UI',
+    sans-serif;
+  color: #000;
+}
+
+.mobile-sim-keyboard--android {
+  background: #ebeef2;
+}
+
+.mobile-sim-keyboard-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 3px 4px;
+}
+
+.mobile-sim-keyboard-key {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  max-width: 36px;
+  background: #fff;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+  font-weight: 400;
+}
+
+.mobile-sim-keyboard-key.grey {
+  background: #abafb6;
+  color: #000;
+  font-size: 18px;
+  flex: 1.5;
+  max-width: 46px;
+}
+
+.mobile-sim-keyboard-key.shift,
+.mobile-sim-keyboard-key.back {
+  flex: 1.4;
+}
+
+/* Reference measurements (real iOS 17 portrait, iPhone 17 Pro Max 440 CSS):
+   123 ~ 50 px (11 %), globe ~ 50 px (11 %), space ~ 230 px (52 %),
+   return ~ 85 px (19 %). Marat reported space looked too narrow + return
+   too stretched — verified math vs old maxes (56/50/--/96 → space 47 %,
+   return 22 %). New maxes 50/50/--/82 give space 52 %, return 19 % at
+   440 CSS device width = real iOS within 0.5 pp. */
+.mobile-sim-keyboard-key.keyIcon {
+  flex: 1.4;
+  max-width: 50px;
+  font-size: 14px;
+}
+
+/* Globe / emoji button — 2nd from left in bottom row. Same width as the
+   123 button (real iOS proportion). Glyph font-size larger so the emoji
+   reads properly at small key size. */
+.mobile-sim-keyboard-key.globe {
+  flex: 1.2;
+  max-width: 50px;
+  font-size: 19px;
+}
+
+/* Return key — real iOS ~19 % of row width. Was max-width 96 which on
+   iPhone 17 Pro Max ate ~22 % of width (visually stretched per Marat).
+   82 brings it back to real iOS proportion. */
+.mobile-sim-keyboard-key.return {
+  flex: 2.4;
+  max-width: 82px;
+}
+
+/* Space bar fills remaining row width via flex-grow. With 123+globe+return
+   capped at 50+50+82 = 182 px, space gets the rest. On iPhone 17 Pro Max
+   (row inner ~411 after padding/margin/3 gaps) that's 229 px = 52 % of
+   440 — matches real iOS. */
+.mobile-sim-keyboard-space {
+  flex: 3.5;
+  height: 100%;
+  background: #fff;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 15px;
+  font-weight: 400;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* Android profile — wider keys, slightly darker surface */
+.mobile-sim-keyboard--android .mobile-sim-keyboard-key {
+  background: #fbfcfe;
+  box-shadow: none;
+  color: #1a1a1a;
+  font-weight: 500;
+}
+.mobile-sim-keyboard--android .mobile-sim-keyboard-key.grey {
+  background: #c6cad1;
+}
+
+/* Mobile Simulator — status bar, scrollbar, tooltip, review banner, screenshot modal,
+ * URL history, device specs, web vitals badges, shortcuts modal, display toggles. */
+
+/* ─── Status ────────────────────────────────────────────────────── */
+
+.status-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border);
+}
+
+/* ─── Tooltip — JS-portalled to escape sidebar overflow:hidden ───
+   The previous CSS pseudo-element (::after on the trigger) inherited the
+   sidebar's `overflow-x: hidden`, clipping tooltips that extended past
+   the sidebar boundary. JS now creates a fixed-position .mm-tooltip
+   appended to document.body, anchored to the trigger via
+   getBoundingClientRect — escapes every parent's clip box. */
+
+.mm-tooltip {
+  position: fixed;
+  z-index: 10000;
+  padding: 4px 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.mm-tooltip.visible {
+  opacity: 1;
+}
+
+/* ─── Passive star rating (sidebar) ─────────────────────────────── */
+/* Mirrors u-eyes: stars sit quietly in the sidebar, no popup / no timer.
+   Mounted by review.js once per install; click → review-gating. */
+
+.rating-stars {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 14px 10px;
+  user-select: none;
+}
+
+.rating-stars-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.rating-stars-row {
+  display: flex;
+  gap: 4px;
+}
+
+.rating-star {
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  /* inline color set by review.js (gold / theme-dim) */
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+/* ─── Screenshot Capture Mode ────────────────────────────────────── */
+/* Applied to <body> only while chrome.tabs.captureVisibleTab is running.
+   Hides the dot-grid background and panel chrome so the captured image
+   contains just devices on a clean white background — like competitor exports. */
+
+.app-layout.screenshot-capture .viewport-area {
+  /* Was hardcoded #fff. Theme-coloured bg matches the capture-mask, so the
+     single frame where the mask is removed for captureVisibleTab is visually
+     identical to the mask — user sees no flash. Flood-fill samples the bg
+     color from the captured image corner, so transparency conversion still
+     works regardless of which color is used here. */
+  background: var(--bg-primary) !important;
+  background-image: none !important;
+  /* Hide the y-scrollbar during capture — `viewport-area` is
+     `overflow-y: auto` for normal use, but when content barely overflows
+     (e.g. tall iPhone + small browser height) the scrollbar renders as
+     a ~6px vertical strip on the right edge of the viewport. With the
+     Full Tab crop spanning `innerWidth - sidebarWidth`, that strip lands
+     inside the output image. `overflow: hidden` removes the scrollbar
+     paint entirely without affecting layout (it cancels the scrollbar
+     gutter that Chrome reserves). */
+  overflow: hidden !important;
+}
+
+/* During capture-prep `.viewport-area` flips to `overflow:hidden` (above).
+   When >1 panel overflows the viewport it becomes a real scroll/clip
+   container, and that ancestor overflow-clip COMBINED with the pre-existing
+   `clip-path: url(#mm-mask-N)` on the descendant `.mm-viewport` (set inline in
+   render/viewport.js) triggers the Chromium iframe-compositing failure
+   documented at lines 192-199 below — the iframe stops painting and shows the
+   `--bg-primary` viewport bg through it (black in dark theme) or reverts to a
+   skeleton. The symptom is visible LIVE in the "Taking screenshot…" overlay and
+   scales with panel count (1 panel fits = no clip-container = fine; 2 = skeleton;
+   3 = black). So we must DROP the SVG clip-path during capture.
+
+   But dropping it to `none` left the OLED screen corners SQUARE — they then
+   stuck out past the rounded chassis bezel for the brief un-masked capture
+   frame (the "ears" Marat saw). Replace the SVG clip with a plain
+   `border-radius` + `overflow:hidden`: that rounds the corners (no ears) WITHOUT
+   the SVG-clip-path-on-an-overflow-clipped-ancestor combination that breaks
+   iframe compositing — border-radius clipping doesn't trigger that bug. Radius
+   comes from `--mm-screen-radius` (set per-device in render/viewport.js from
+   getDeviceMetrics().screenRadius); 0 for square devices (SE/8) → still square,
+   which is correct for them. The final PNG is unaffected — its corners come
+   from canvas Path2D clipping using paths.portrait, not this CSS. Site Only
+   (.without-frame) / Full Page (.fullpage-capture) still force clip-path:none
+   below — they crop to the rectangular viewport rect on purpose. */
+.app-layout.screenshot-capture .mm-viewport {
+  clip-path: none !important;
+  -webkit-clip-path: none !important;
+  border-radius: var(--mm-screen-radius, 0px) !important;
+  overflow: hidden !important;
+}
+
+/* Capture-mask overlay — covers the whole simulator UI while
+   screenshot-capture is in effect (which can be 1.1s+ for the
+   double-capture flow). Without this the user briefly sees the simulator
+   with sidebar + panel-header + add-tile all hidden — looks like a
+   broken intermediate state. Mask is added/removed from `getBodyEl()`
+   in manager.takeScreenshot in lockstep with the .app-layout class. Hidden
+   from the actual capture via the :host(.without-frame) second pass already
+   excludes overlay paint? No — we hide it ourselves: just before each
+   captureVisibleTab call we toggle display:none on the mask, then
+   restore. Sub-50ms blink is unavoidable (the page paint must be clean
+   for the capture itself), but the lengthy 1.1s gap between captures
+   is covered. */
+.mm-capture-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  background: var(--bg-primary);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+}
+.mm-capture-mask::after {
+  content: 'Taking screenshot…';
+}
+/* Hide the mask during the actual captureVisibleTab call. Toggled via
+   inline style in manager.takeScreenshot so the mask doesn't appear
+   in the captured PNG. */
+.mm-capture-mask[data-capturing='1'] {
+  display: none !important;
+}
+
+.app-layout.screenshot-capture .panel-header,
+.app-layout.screenshot-capture .panel-header *,
+.app-layout.screenshot-capture .panel-specs,
+.app-layout.screenshot-capture .sidebar,
+.app-layout.screenshot-capture .sidebar * {
+  /* `transition: none !important` is critical — .btn-icon (and other
+     descendants) set `transition: all 0.15s`, and per CSS spec
+     `visibility` uses step-end so computed visibility stays `visible`
+     for the entire transition duration before flipping to `hidden`.
+     captureVisibleTab fires within rAF after class change, capturing
+     the pre-transition `visible` paint. Disabling transitions on the
+     element AND all descendants ensures instant style apply. Same
+     pattern documented in TROUBLESHOOTING.md ⭐⭐⭐ UI refactor #1. */
+  visibility: hidden !important;
+  transition: none !important;
+}
+
+/* Site-mode capture — class toggled on host root during the SECOND
+   captureVisibleTab pass in manager.takeScreenshot. Direct port of
+   webmobilefirst's simulator.css:
+     :host(.without-frame) .terminal-object { opacity: 0 }
+     :host(.without-frame) .viewport        { clip-path: none !important }
+   Their `.terminal-object` is the chassis layer (z-stack sibling of the
+   viewport); ours is `.hd-bezel-overlay`. Their `.viewport` is the flex-
+   column chrome+iframe container; ours is `.mm-viewport`. Effect: chassis
+   gone + OLED corners square → captured image has clean rectangular
+   chrome+iframe with no chassis bleed. Cropping `rectSite` (which is
+   .mm-viewport.getBoundingClientRect()) then yields competitor-parity
+   Site Only output. */
+:host(.without-frame) .hd-bezel-overlay {
+  opacity: 0 !important;
+}
+:host(.without-frame) .mm-viewport {
+  clip-path: none !important;
+  -webkit-clip-path: none !important;
+  /* Override the screenshot-capture border-radius — Site Only crops to the
+     RECTANGULAR viewport rect, square corners are intentional here. */
+  border-radius: 0 !important;
+}
+
+/* Full Page capture mode — neutralise the .mm-viewport rounded clip-path so
+   iframe renders edge-to-edge during scroll-stitch. Overlays (chassis IMG,
+   chrome bars, Island, keyboard, capture progress indicator) are hidden via
+   inline display:none from capture.js hideSelectors — that's the source of
+   truth for what gets hidden, here we just disable the rounded clip so the
+   chunks crop cleanly to a rectangle. Previously this block used
+   `.hd-bezel-device { visibility: hidden }` which (with explicit child
+   override `iframe.device-screen { visibility: visible }`) was supposed to
+   isolate the iframe — but in Chromium that combination prevents the iframe
+   from compositing in captureVisibleTab, producing solid-black chunks. */
+.app-layout.fullpage-capture .mm-viewport {
+  clip-path: none !important;
+  /* Override the screenshot-capture border-radius — chunks crop to a
+     rectangle for the scroll-stitch. */
+  border-radius: 0 !important;
+}
+
+/* Full Page capture takes 3+ seconds (scroll-stitch). Override the white
+   viewport bg from .screenshot-capture so the user doesn't see a white flash
+   that clashes with the chosen theme — full-page output is cropped from the
+   iframe rect only, so viewport bg color never ends up in the final image. */
+.app-layout.fullpage-capture .viewport-area {
+  background: var(--bg-primary) !important;
+}
+
+/* Capture mask — theme-coloured layer shown during the regular takeScreenshot
+   flow to hide the brief white viewport flash. Briefly hidden for the single
+   frame of chrome.tabs.captureVisibleTab so it doesn't end up in the image,
+   then shown back until the screenshot modal appears on top of it. */
+.capture-mask {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-primary);
+  z-index: 1500; /* below cdm-modal (2000), above viewport UI */
+  pointer-events: none;
+  will-change: opacity;
+}
+
+/* Soft fade-in only on restore — initial hide is instant so the snapshot
+   doesn't see a half-transparent mask. */
+.capture-mask.mask-restoring {
+  transition: opacity 160ms ease-out;
+}
+
+/* Progress indicator shown only during full-page scroll-stitch. Positioned
+   bottom-center far from any device panel — won't be picked up by the
+   iframe-rect crop. */
+.fullpage-capture-overlay {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px var(--frame-shadow);
+  z-index: 10000;
+  pointer-events: none;
+}
+
+/* ─── Screenshot Modal (uses .cdm-* base styles, see Custom Device Modal) ──── */
+
+.screenshot-dialog {
+  width: min(820px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+}
+
+.screenshot-body {
+  gap: 10px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ss-devices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+/* Mode selector — segmented control (no radio dots, single shared frame) */
+.ss-modes {
+  display: flex;
+  padding: 3px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  gap: 2px;
+}
+
+.ss-mode {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  white-space: nowrap;
+}
+
+.ss-mode svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.ss-mode:hover:not(.active) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ss-mode.active {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Background option row */
+/* Screenshot modal — bg toggle + preset chips + custom picker */
+.ss-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.ss-bg-presets {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ss-bg-preset {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.ss-bg-preset:hover {
+  transform: scale(1.12);
+  border-color: var(--text-secondary);
+}
+
+.ss-bg-preset.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.ss-bg-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+}
+
+.ss-bg-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ss-bg-toggle input {
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.ss-bg-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ss-bg-picker input[type='color'] {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ss-bg-picker input[type='text'] {
+  width: 82px;
+  height: 28px;
+  padding: 0 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  outline: none;
+}
+
+.ss-bg-picker input[type='text']:focus {
+  border-color: var(--accent);
+}
+
+/* Loading overlay on preview while regenerate is running.
+   NOTE: `[hidden]` attribute alone is insufficient — this class sets
+   `display: flex` which overrides UA stylesheet's `[hidden] { display: none }`
+   due to specificity, leaving the overlay permanently visible. */
+.ss-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 8px;
+  z-index: 2;
+}
+
+.ss-loading[hidden] {
+  display: none;
+}
+
+.screenshot-preview-wrap {
+  position: relative; /* anchor for .ss-loading */
+}
+
+.ss-device-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.ss-device-check:has(input:checked) {
+  background: rgba(90, 200, 250, 0.12);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.ss-device-check input {
+  margin: 0;
+  width: 13px;
+  height: 13px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.screenshot-preview-wrap {
+  width: 100%;
+  height: 60vh;
+  max-height: 560px;
+  /* Checkered pattern reveals transparent areas of the PNG */
+  background-color: #2a2a2a;
+  background-image:
+    linear-gradient(45deg, #1f1f1f 25%, transparent 25%),
+    linear-gradient(-45deg, #1f1f1f 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1f1f1f 75%),
+    linear-gradient(-45deg, transparent 75%, #1f1f1f 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.screenshot-preview {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+}
+
+.screenshot-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Device Specs (13.1) + Breakpoint Badge (13.3) ─────────────── */
+
+.panel-specs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.panel-specs-dims {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.panel-specs-dpr {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.panel-specs-phys {
+  color: var(--text-secondary);
+  cursor: help;
+}
+
+.panel-specs-dims,
+.panel-specs-dpr {
+  cursor: help;
+}
+
+.panel-breakpoint {
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+  cursor: help;
+}
+
+/* ─── Web Vitals Badge (13.2) ───────────────────────────────────── */
+
+.panel-vitals {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.vital-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.vital-badge--good {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+.vital-badge--needs-improvement {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+.vital-badge--poor {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.vital-label {
+  opacity: 0.7;
+}
+
+/* ─── Shortcuts Help Modal (15.2) ───────────────────────────────── */
+
+.shortcuts-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shortcuts-content {
+  position: relative;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 28px;
+  max-width: 420px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideInUp 0.2s ease;
+}
+
+.shortcuts-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  align-items: center;
+}
+
+.shortcut-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 3px 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-family: 'Inter', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.shortcut-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ─── Display Toggles (11.1) ────────────────────────────────────── */
+
+.display-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+/* When toggle-row is also a group-item, inherit group-item padding */
+.group-item.toggle-row {
+  padding: 11px 14px;
+}
+
+.group-item .gi-text,
+.toggle-label {
+  font-size: 14px;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.toggle-input {
+  display: none;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: var(--text-muted);
+  border-radius: 4px;
+  transition: all 0.2s cubic-bezier(0.4, 1, 0.6, 1);
+}
+
+.toggle-input:checked + .toggle-switch {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.toggle-input:checked + .toggle-switch::after {
+  left: 20px;
+  background: #fff;
+}
+</style><div class="app-layout">
+      <!-- ─── Viewport Area (full height, takes all space) ──── -->
+      <div class="viewport-area" id="viewport-area">
+        <!-- Device panels injected by JS -->
+      <div class="device-panel" id="panel-2" data-panel-id="2"><div class="panel-header"><div class="drag-handle" draggable="true" title="Drag to reorder panels"><svg viewBox="0 0 12 16" fill="currentColor" aria-hidden="true" width="10" height="14"><circle cx="3" cy="3" r="1.2"></circle><circle cx="3" cy="8" r="1.2"></circle><circle cx="3" cy="13" r="1.2"></circle><circle cx="9" cy="3" r="1.2"></circle><circle cx="9" cy="8" r="1.2"></circle><circle cx="9" cy="13" r="1.2"></circle></svg></div><button type="button" class="device-picker-trigger panel-device-select"><span class="dpt-label">iPhone 17 Pro Max <span class="dpt-dims">440×956 ★</span></span><span class="dpt-chevron">▾</span></button><div class="panel-header-spacer"></div><button class="btn-icon panel-ctrl" title="Rotate this device"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M7.5 3.5C9 2.5 11 2 13 2c5.5 0 10 4.5 10 10s-4.5 10-10 10c-4.5 0-8.3-3-9.5-7"></path><polyline points="1 2 4 6 8 3"></polyline></svg></button><button class="btn-icon panel-ctrl" title="Switch device chrome to Dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor"></path></svg></button><button class="btn-icon panel-ctrl" title="Screenshot this device"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></button><button class="btn-icon panel-ctrl" title="Lock orientation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></button><button class="btn-icon panel-close" title="Close this device"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div><div class="panel-specs">
+        <span class="panel-specs-dims" title="Logical viewport (CSS pixels)">440×956</span>
+        <span class="panel-specs-dpr" title="Device pixel ratio — physical pixels per CSS pixel">@3x</span>
+        <span class="panel-specs-phys" title="Physical screen resolution (logical × DPR)">1320×2868px</span>
+        <span class="panel-breakpoint" style="background:#22c55e" title="Tailwind/Bootstrap responsive breakpoint at 440px wide">md</span>
+      </div><div class="frame-wrapper" style="width: 119px; height: 247px;"><div data-panel-id="2" class="hd-bezel-device" style="transform: scale(0.25); transform-origin: left top; width: 476px; height: 986px; position: relative;"><div class="mm-viewport" style="position: absolute; left: 18px; top: 15px; width: 440px; height: 956px; display: flex; flex-direction: column; overflow: hidden; background: rgb(255, 255, 255); z-index: 1; clip-path: url(&quot;#mm-mask-2&quot;); --mm-screen-radius: 55px;"><svg width="0" height="0" style="position: absolute; width: 0px; height: 0px; pointer-events: none;"><defs><clipPath id="mm-mask-2" clipPathUnits="userSpaceOnUse"><path d="M 55 0 L 385 0 A 55 55 0 0 1 440 55 L 440 901 A 55 55 0 0 1 385 956 L 55 956 A 55 55 0 0 1 0 901 L 0 55 A 55 55 0 0 1 55 0 Z" fill-rule="evenodd" clip-rule="evenodd"></path></clipPath></defs></svg><div class="mm-status-bar" style="flex-shrink: 0; height: 72px; position: relative; overflow: hidden;">
+        <div class="chrome-status-bar" style="height:72px">
+          <div class="sb-left"><span class="sb-time">12:26 PM</span></div>
+          <div class="sb-right"><span class="sb-icons"><svg class="sb-icon" viewBox="8.27 -70.54 103.54 70.58" width="17" height="12"><path fill="currentColor" fill-rule="evenodd" d="M96.1426-1.46484L106.104-1.46484C108.643-1.46484 110.303-3.27148 110.303-5.95703L110.303-64.5508C110.303-67.2363 108.643-69.043 106.104-69.043L96.1426-69.043C93.6035-69.043 91.8945-67.2363 91.8945-64.5508L91.8945-5.95703C91.8945-3.27148 93.6035-1.46484 96.1426-1.46484Z M68.75-1.46484L78.6621-1.46484C81.2012-1.46484 82.9102-3.27148 82.9102-5.95703L82.9102-49.3164C82.9102-52.002 81.2012-53.8086 78.6621-53.8086L68.75-53.8086C66.2109-53.8086 64.502-52.002 64.502-49.3164L64.502-5.95703C64.502-3.27148 66.2109-1.46484 68.75-1.46484Z M41.4062-1.46484L51.3184-1.46484C53.8574-1.46484 55.5664-3.27148 55.5664-5.95703L55.5664-35.4004C55.5664-38.0371 53.8574-39.8926 51.3184-39.8926L41.4062-39.8926C38.8672-39.8926 37.1582-38.0371 37.1582-35.4004L37.1582-5.95703C37.1582-3.27148 38.8672-1.46484 41.4062-1.46484Z M14.0137-1.46484L23.9258-1.46484C26.4648-1.46484 28.1738-3.27148 28.1738-5.95703L28.1738-23.3398C28.1738-26.0254 26.4648-27.7832 23.9258-27.7832L14.0137-27.7832C11.4746-27.7832 9.76562-26.0254 9.76562-23.3398L9.76562-5.95703C9.76562-3.27148 11.4746-1.46484 14.0137-1.46484Z"></path></svg><svg class="sb-icon" viewBox="6.07 -68.74 91.92 67.06" width="16" height="12"><path fill="currentColor" fill-rule="evenodd" d="M13.7207-39.9902C14.4531-39.209 15.625-39.209 16.4062-40.0391C25.8301-50.0488 38.1836-55.2734 52.002-55.2734C65.918-55.2734 78.3203-50 87.7441-39.9902C88.4277-39.2578 89.5508-39.3066 90.332-40.0879L95.8008-45.5078C96.4844-46.2402 96.4355-47.1191 95.8984-47.8027C86.9141-58.9355 69.9707-67.2363 52.002-67.2363C34.082-67.2363 17.1387-58.9355 8.10547-47.8027C7.56836-47.1191 7.56836-46.2402 8.25195-45.5078Z M29.5898-24.0234C30.4199-23.1445 31.543-23.291 32.373-24.1699C36.8652-29.248 44.2871-32.959 52.002-32.9102C59.8145-32.959 67.1875-29.1016 71.8262-24.0234C72.5586-23.1934 73.584-23.2422 74.4629-24.0723L80.5664-30.0781C81.2012-30.7129 81.25-31.6406 80.7129-32.373C74.8535-39.4531 64.1602-44.9219 52.002-44.9219C39.8438-44.9219 29.1504-39.4531 23.3398-32.373C22.7539-31.6406 22.7539-30.8105 23.4863-30.0781Z M52.002-3.17383C52.9297-3.17383 53.6621-3.56445 55.2246-5.07812L64.6484-14.1113C65.2344-14.6973 65.3809-15.6738 64.8438-16.3574C62.2559-19.6777 57.5195-22.5586 52.002-22.5586C46.2891-22.5586 41.5527-19.5312 39.0137-16.0645C38.623-15.4785 38.8184-14.6973 39.4531-14.1113L48.7793-5.07812C50.3418-3.61328 51.123-3.17383 52.002-3.17383Z"></path></svg><svg class="sb-icon sb-battery" viewBox="6 -65 122 67" width="28" height="13"><path fill="currentColor" fill-rule="evenodd" d="M30.6152-8.69141L91.2109-8.69141C97.5098-8.69141 103.32-9.22852 107.471-13.3301C111.572-17.4805 112.061-23.291 112.061-29.541L112.061-40.9668C112.061-47.2168 111.572-53.0273 107.471-57.1289C103.32-61.2793 97.5098-61.8164 91.2109-61.8164L30.6152-61.8164C24.3652-61.8164 18.5059-61.2793 14.3555-57.1289C10.2539-53.0273 9.76562-47.2168 9.76562-40.9668L9.76562-29.541C9.76562-23.291 10.2539-17.4805 14.3555-13.3301C18.5059-9.22852 24.3164-8.69141 30.6152-8.69141ZM29.541-15.7227C25.9766-15.7227 21.7773-16.1621 19.4824-18.457C17.1875-20.752 16.7969-24.9023 16.7969-28.4668L16.7969-41.9922C16.7969-45.6055 17.1875-49.707 19.4824-52.0508C21.7773-54.3457 25.9766-54.7363 29.5898-54.7363L92.2852-54.7363C95.8496-54.7363 100.049-54.3457 102.344-52.0508C104.639-49.707 105.029-45.6055 105.029-41.9922L105.029-28.4668C105.029-24.9023 104.639-20.752 102.344-18.457C100.049-16.1621 95.8496-15.7227 92.2852-15.7227ZM117.773-25C120.898-25.1953 125.098-29.1992 125.098-35.2539C125.098-41.3086 120.898-45.3125 117.773-45.5078Z"></path><rect x="21.58" y="-49.95" width="79" height="29.44" rx="4" fill="currentColor" opacity="0.9"></rect></svg></span></div>
+        </div></div><div class="mm-iframe-wrapper" style="flex: 1 1 0%; display: flex; min-height: 0px; background: rgb(255, 255, 255); position: relative; padding-left: 0px; padding-right: 0px; box-sizing: border-box;"><iframe id="iframe-2" name="mobile-sim:ios:2" allowfullscreen="" class="device-screen" src="https://www.zomato.com/allahabad/delivery" style="width: 100%; height: 100%; border: 0px; display: block; background: transparent;"></iframe></div><div class="mm-footer browser-chrome-bottom browser-chrome-bottom--ios" style="flex-shrink: 0; height: 128px; position: relative; overflow: hidden; transition: height 80ms linear;">
+          <div class="chrome-bottom-urlbar" style="height: 50px; padding: 10px 22px; overflow: hidden; transition: height 80ms linear, padding 80ms linear;">
+            <div class="chrome-bottom-url-field mobile-sim-url-pill" style="transform-origin: center center; transform: translateY(0px) scale(1); transition: transform 80ms linear, background-color 80ms linear, opacity 80ms linear;">
+              <div class="chrome-pill-bg mobile-sim-url-pill-fade" style="opacity: 1; transition: opacity 80ms linear;"></div>
+              <span class="chrome-url-pagesettings mobile-sim-url-pill-fade" style="opacity: 1; transition: opacity 80ms linear;"><span class="chrome-url-letter"><span class="chrome-url-letter-big">A</span>A</span></span>
+              <span class="chrome-bottom-url-content">
+                <span class="chrome-url-lock"><svg viewBox="0 0 12 14" width="10" height="12"><path d="M10 5H9V3.5a3 3 0 0 0-6 0V5H2a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1zM4.5 3.5a1.5 1.5 0 0 1 3 0V5h-3V3.5z" fill="currentColor" opacity="0.5"></path></svg></span>
+                <span class="chrome-url-text">zomato.com</span>
+              </span>
+              <span class="chrome-bottom-reload mobile-sim-url-pill-fade" style="opacity: 1; transition: opacity 80ms linear;"><svg viewBox="5.34 -82.36 71.16 85.62" width="14" height="14"><path fill="currentColor" d="M40.918 1.75781C59.7656 1.75781 75-13.5254 75-32.373C75-34.3262 73.3887-35.8887 71.4844-35.8887C69.5801-35.8887 67.9688-34.3262 67.9688-32.373C67.9688-17.4316 55.8594-5.37109 40.918-5.37109C25.9766-5.37109 13.8672-17.4316 13.8672-32.373C13.8672-47.3145 25.9766-59.4238 40.918-59.4238C44.0918-59.4238 47.1191-58.9355 49.9512-57.9102C52.1973-57.0312 54.8828-58.3008 54.8828-61.084C54.8828-63.3789 53.1738-64.1113 52.0508-64.502C48.584-65.7715 44.8242-66.4062 40.918-66.4062C22.0703-66.4062 6.83594-51.1719 6.83594-32.3242C6.83594-13.5254 22.0703 1.75781 40.918 1.75781ZM50.6836-61.6699L37.4512-48.6816C36.7676-48.0469 36.4746-47.1191 36.4746-46.2402C36.4746-44.2383 37.9883-42.7246 39.8926-42.7246C41.0156-42.7246 41.7969-43.1152 42.4316-43.7012L57.8613-59.1309C58.5449-59.8145 58.8867-60.6445 58.8867-61.6699C58.8867-62.5977 58.4961-63.5254 57.8613-64.1602L42.4316-79.7852C41.7969-80.4199 40.9668-80.8594 39.8926-80.8594C37.9883-80.8594 36.4746-79.248 36.4746-77.2461C36.4746-76.3184 36.7676-75.3906 37.4023-74.7559Z"></path></svg></span>
+            </div>
+          </div>
+          <div class="chrome-toolbar" style="height: 50px; overflow: hidden; opacity: 1; transition: height 80ms linear, opacity 80ms linear;">
+            <svg viewBox="0 0 31 55" width="18" height="18" fill="none"><path stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M28.3144 2.5354L3.53595 27.021M28.4655 52.0619L3.0625 27.5349"></path></svg><svg viewBox="0 0 31 55" width="18" height="18" fill="none"><path stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M2.68623 52.4645L27.4647 27.979M2.53516 2.93799L27.9381 27.465"></path></svg><svg viewBox="0 0 56 73" width="24" height="24"><path fill="currentColor" d="M15.591 11.8068C14.7123 12.6855 14.7123 14.1101 15.591 14.9888C16.4697 15.8675 17.8943 15.8675 18.773 14.9888L26 7.76178V45.1971C26 46.4398 27.0074 47.4471 28.25 47.4471C29.4926 47.4471 30.5 46.4398 30.5 45.1971V7.48272L37.7832 14.7659C38.6619 15.6446 40.0865 15.6446 40.9652 14.7659C41.8439 13.8873 41.8439 12.4626 40.9652 11.584L30.1965 0.815221C30.0099 0.62864 29.7987 0.481678 29.5733 0.374336C28.6995 -0.206342 27.5093 -0.11145 26.7388 0.65901L15.591 11.8068Z"></path><path fill="currentColor" d="M8 20.4471H19V24.9471H8C6.067 24.9471 4.5 26.5141 4.5 28.4471V64.4471C4.5 66.3801 6.067 67.9471 8 67.9471H48C49.933 67.9471 51.5 66.3801 51.5 64.4471V28.4471C51.5 26.5141 49.933 24.9471 48 24.9471H38V20.4471H48C52.4183 20.4471 56 24.0289 56 28.4471V64.4471C56 68.8654 52.4183 72.4471 48 72.4471H8C3.58172 72.4471 0 68.8654 0 64.4471V28.4471C0 24.0289 3.58172 20.4471 8 20.4471Z"></path></svg><svg viewBox="0 0 70 60" width="26" height="20"><path fill="currentColor" fill-rule="evenodd" d="M32.2931 61C31.7327 60.3476 31.0631 59.7201 30.2817 59.1293C27.4234 56.9682 23.2728 55.5 18.5 55.5C13.7272 55.5 9.5766 56.9682 6.7183 59.1293C5.93693 59.7201 5.26734 60.3476 4.70686 61H0V8.81399C3.30175 3.60059 10.3448 0 18.5 0C25.266 0 31.2665 2.47839 35 6.29998C38.7335 2.47839 44.734 0 51.5 0C60.094 0 67.4529 3.99843 70.5 9.66911V61H65.2931C64.7327 60.3476 64.0631 59.7201 63.2817 59.1293C60.4234 56.9682 56.2728 55.5 51.5 55.5C46.7272 55.5 42.5766 56.9682 39.7183 59.1293C38.9369 59.7201 38.2673 60.3476 37.7069 61H32.2931ZM37.5 10.248V55.1774C41.1642 52.5862 46.0871 51 51.5 51C57.1631 51 62.2899 52.7362 66 55.5431V10.9184C65.3272 9.93494 64.4239 8.9929 63.2817 8.12931C60.4234 5.96815 56.2728 4.5 51.5 4.5C46.7272 4.5 42.5766 5.96815 39.7183 8.12931C38.8384 8.79462 38.1002 9.50648 37.5 10.248ZM33 55.5431C29.2899 52.7362 24.1631 51 18.5 51C13.0871 51 8.1642 52.5862 4.5 55.1774V10.248C5.10022 9.50648 5.83838 8.79462 6.7183 8.12931C9.5766 5.96815 13.7272 4.5 18.5 4.5C23.2728 4.5 27.4234 5.96815 30.2817 8.12931C31.4239 8.9929 32.3272 9.93494 33 10.9184V55.5431Z"></path></svg><svg viewBox="0 0 67 66" width="22" height="22"><path fill="currentColor" fill-rule="evenodd" d="M52 14H59C63.4183 14 67 17.5817 67 22V58C67 62.4183 63.4183 66 59 66H23C18.5817 66 15 62.4183 15 58V52H8C3.58172 52 0 48.4183 0 44V8C0 3.58172 3.58172 0 8 0H44C48.4183 0 52 3.58172 52 8V14ZM44 4.5H8C6.067 4.5 4.5 6.067 4.5 8V44C4.5 45.933 6.067 47.5 8 47.5H15V22C15 17.5817 18.5817 14 23 14H47.5V8C47.5 6.067 45.933 4.5 44 4.5ZM23 18.5H59C60.933 18.5 62.5 20.067 62.5 22V58C62.5 59.933 60.933 61.5 59 61.5H23C21.067 61.5 19.5 59.933 19.5 58V22C19.5 20.067 21.067 18.5 23 18.5Z"></path></svg>
+          </div>
+          <div class="chrome-home-indicator"></div></div><div class="hd-island-overlay" style="position: absolute; top: 13px; left: 153px; width: 134px; height: 37px; background: rgb(0, 0, 0); border-radius: 1000px; transition: 1s; pointer-events: none; z-index: 11;"></div></div><img class="hd-bezel-overlay" src="chrome-extension://ffdicjopgnblhkdhlfocbpbloapnkbdl/frames/iphone-17-pro-max-cosmic-orange.webp" alt="iPhone 17 Pro Max Cosmic Orange" draggable="false" style="position: absolute; top: 0px; left: 0px; width: 476px; height: 986px; pointer-events: none; z-index: 10; object-fit: fill;"></div></div></div><button type="button" class="viewport-add-tile" title="Add another device"><span class="vat-plus">+</span><span class="vat-label">Add device</span></button></div>
+
+      <!-- ─── Right Sidebar ─────────────────────────────────── -->
+      <div class="sidebar" id="sidebar">
+        <!-- Brand -->
+        <div class="sidebar-brand">
+          <button class="sidebar-collapse-btn" id="btn-sidebar-collapse" type="button" title="Hide sidebar (H)" aria-label="Hide sidebar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+              <polyline points="15 6 9 12 15 18"></polyline>
+            </svg>
+          </button>
+          <span class="brand-text">Mobile Simulator
+            <span class="brand-version" id="brand-version">v2.0.4</span></span>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="sidebar-section">
+          <div class="quick-actions-grid">
+            <button class="quick-action-btn" id="btn-add" data-tooltip="Add device (+)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              Add
+            </button>
+            <button class="quick-action-btn" id="btn-screenshot" data-tooltip="Screenshot">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              Shot
+            </button>
+            <button class="quick-action-btn" id="btn-refresh" data-tooltip="Refresh all (Ctrl+R)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <path d="M21 2v6h-6"></path>
+                <path d="M3 12a9 9 0 0115-6.7L21 8"></path>
+                <path d="M3 22v-6h6"></path>
+                <path d="M21 12a9 9 0 01-15 6.7L3 16"></path>
+              </svg>
+              Refresh
+            </button>
+            <button class="quick-action-btn" id="btn-settings" data-tooltip="Settings (device chrome, theme, tools, privacy)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+              Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Presets — built-in starter setups + user-saved snapshots -->
+        <div class="sidebar-section" draggable="false">
+          <label class="sidebar-label">
+            <span class="drag-handle" style="cursor: grab;">⠿</span>Presets
+            <button class="preset-save-btn" id="btn-save-preset" title="Save current devices as a new preset" type="button">
+              +
+            </button>
+          </label>
+          <div class="group-list" id="preset-list">
+            <button class="group-item preset-btn" data-preset="iphone-android">
+              <span class="gi-text">iPhone + Android</span>
+              <span class="gi-chevron">›</span>
+            </button>
+            <button class="group-item preset-btn" data-preset="iphone-android-tablet">
+              <span class="gi-text">+ Tablet</span>
+              <span class="gi-chevron">›</span>
+            </button>
+            <button class="group-item preset-btn" data-preset="responsive">
+              <span class="gi-text">Responsive (3)</span>
+              <span class="gi-chevron">›</span>
+            </button>
+            <!-- Custom presets injected by manager._renderCustomPresets() -->
+          </div>
+        </div>
+
+        <!-- Multi-panel controls (only when 2+ panels) -->
+        <div class="sidebar-section multi-device-only" style="display: none;" draggable="false">
+          <label class="sidebar-label"><span class="drag-handle" style="cursor: grab;">⠿</span>Multi-panel</label>
+          <div class="group-list">
+            <label class="group-item toggle-row" id="row-sync-scroll" title="Mirror scroll position across all devices (S) — useful when comparing layouts on multiple screens">
+              <span class="gi-text">Sync scroll</span>
+              <input type="checkbox" id="btn-sync-scroll" class="toggle-input">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="group-item toggle-row" id="row-grid" title="Auto-arranges devices in a square layout (e.g. 4 → 2×2, 9 → 3×3) instead of a single row. Shortcut: G.">
+              <span class="gi-text">Grid layout</span>
+              <input type="checkbox" id="btn-grid" class="toggle-input">
+              <span class="toggle-switch"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Zoom -->
+        <div class="sidebar-section" draggable="false">
+          <label class="sidebar-label"><span class="drag-handle" style="cursor: grab;">⠿</span>Zoom
+            <span id="zoom-value" class="zoom-value-label">Fit</span></label>
+          <div class="group-list">
+            <div class="zoom-controls" style="padding: 10px 14px">
+              <input type="range" id="zoom-slider" min="10" max="200" value="100" class="zoom-slider">
+              <button class="zoom-fit-btn" id="btn-zoom-fit">Fit</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status dashboard (Phase 3) — persistent pills + transient message -->
+        <div class="sidebar-status">
+          <div class="status-pills" id="status-pills"><span class="pill pill-count" title="1 device open">📱 1</span><button type="button" class="pill pill-theme" data-theme="dark" title="Theme: Dark — click to cycle">🌙</button></div>
+          <div class="status-transient" id="status-text">Loaded: https://www.zomato.com/allahabad/bhatti-ka-swad-civil-lines/order</div>
+          <span class="status-dims-hidden" id="status-dims" hidden=""></span>
+        </div>
+
+        <!-- Passive star rating (mounted by review.js, once per install) -->
+        <div class="rating-stars" id="rating-stars" hidden=""></div>
+
+        <!-- Exit -->
+        <button class="btn-exit" id="btn-exit" title="Close simulator and return to normal browsing">
+          Exit Simulator
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── Settings Drawer (right slide-in) ──────────────────── -->
+    <div class="drawer-backdrop" id="drawer-backdrop" hidden=""></div>
+    <aside class="settings-drawer" id="settings-drawer" aria-hidden="true">
+      <header class="drawer-header">
+        <h3 class="drawer-title">Settings</h3>
+        <button class="drawer-close" id="drawer-close" type="button" aria-label="Close settings">
+          ✕
+        </button>
+      </header>
+      <div class="drawer-body">
+        <section class="drawer-section">
+          <h4 class="drawer-section-title">Device chrome</h4>
+          <div class="group-list">
+            <label class="group-item toggle-row" title="Toggle device frame (F)">
+              <span class="gi-text">Device frame</span>
+              <input type="checkbox" id="btn-frame" class="toggle-input" checked="">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="group-item toggle-row" title="Hide the Safari address/tabs bar — top URL row + bottom toolbar. Matches webmobilefirst's 'settings_hide_header_footer' switch (controls device_browser).">
+              <span class="gi-text">Hide browser chrome</span>
+              <input type="checkbox" id="toggle-pwa" class="toggle-input">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="group-item toggle-row" title="Hide the OS status bar (clock + battery row) on the device. Independent from Hide browser chrome — matches webmobilefirst's 'settings_fullscreen' switch (controls device_os).">
+              <span class="gi-text">Site fullscreen</span>
+              <input type="checkbox" id="toggle-fullscreen" class="toggle-input">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="group-item toggle-row ios-panel-only" id="row-ios-top-url" title="iPhone Safari can show the address bar at the top (Single Tab) or bottom (Tab Bar). Mirrors the real iOS Settings → Safari → Tabs option.">
+              <span class="gi-text">iPhone Safari URL bar (Top/Bottom)</span>
+              <input type="checkbox" id="toggle-ios-top-url" class="toggle-input">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="group-item toggle-row" title="Static visual overlay for screenshots and design previews. Does not respond to input focus inside the page.">
+              <span class="gi-text">Keyboard overlay (visual only)</span>
+              <input type="checkbox" id="toggle-keyboard" class="toggle-input">
+              <span class="toggle-switch"></span>
+            </label>
+            <div class="drawer-block url-display-block url-required-only" id="row-custom-url" title="Show a custom string in the device's address bar (e.g. myapp.com) instead of the real URL. Visible only while a URL is loaded.">
+              <div class="drawer-block-label">
+                Custom URL display (cosmetic)
+              </div>
+              <input type="text" id="custom-display-url" class="drawer-text-input" placeholder="myapp.com" autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+        </section>
+        <section class="drawer-section">
+          <h4 class="drawer-section-title">Appearance</h4>
+          <div class="drawer-block drawer-block-hint">
+            Theme moved to the status bar — click the sun/moon icon at the
+            bottom of the sidebar to cycle Dark → Light → Auto.
+          </div>
+          <div class="drawer-block">
+            <label class="group-item toggle-row" title="Show a subtle dot grid behind the devices. Turn off for a clean uniform background.">
+              <span class="gi-text">Dot grid background</span>
+              <input type="checkbox" id="toggle-dot-grid" class="toggle-input" checked="">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="group-item toggle-row" title="Tints the area around the device (not the sidebar) with a custom color — useful for screenshots and brand previews.">
+              <span class="gi-text">Viewport background color</span>
+              <input type="checkbox" id="toggle-viewport-bg" class="toggle-input">
+              <span class="toggle-switch"></span>
+            </label>
+            <div class="viewport-bg-row viewport-bg-enabled-only" id="row-viewport-bg" hidden="">
+              <input type="color" id="viewport-bg-color" class="viewport-bg-color" value="#ffffff" aria-label="Viewport background color">
+              <span class="viewport-bg-hex" id="viewport-bg-hex">#ffffff</span>
+            </div>
+          </div>
+        </section>
+        <section class="drawer-section">
+          <h4 class="drawer-section-title">Behavior</h4>
+          <div class="group-list">
+            <label class="group-item toggle-row" title="Show LCP / CLS / FID metrics under each device. Reported from inside each iframe via a content script — works across all origins. FID requires a tap inside the device before it appears.">
+              <span class="gi-text">Show Web Vitals</span>
+              <input type="checkbox" id="toggle-vitals" class="toggle-input">
+              <span class="toggle-switch"></span>
+            </label>
+            <label class="group-item toggle-row" title="Show viewport size + DPR + physical resolution under each device.">
+              <span class="gi-text">Show device specs</span>
+              <input type="checkbox" id="toggle-specs" class="toggle-input" checked="">
+              <span class="toggle-switch"></span>
+            </label>
+          </div>
+        </section>
+        <section class="drawer-section">
+          <h4 class="drawer-section-title">Tools</h4>
+          <div class="group-list">
+            <button class="group-item tool-btn" id="btn-shortcuts" title="Keyboard shortcuts (?)">
+              <span class="gi-text">Keyboard shortcuts</span>
+              <span class="gi-chevron">›</span>
+            </button>
+            <button class="group-item tool-btn" id="btn-export" title="Export configuration (E)">
+              <span class="gi-text">Export</span>
+              <span class="gi-chevron">›</span>
+            </button>
+            <button class="group-item tool-btn" id="btn-import" title="Import configuration">
+              <span class="gi-text">Import</span>
+              <span class="gi-chevron">›</span>
+            </button>
+            <button class="group-item tool-btn" id="btn-feedback" title="Send feedback — report a bug, suggest an improvement, or request a device">
+              <span class="gi-text">Send feedback</span>
+              <span class="gi-chevron">›</span>
+            </button>
+          </div>
+        </section>
+        <section class="drawer-section">
+          <h4 class="drawer-section-title">Privacy</h4>
+          <div class="group-list">
+            <label class="group-item toggle-row" title="Send anonymous usage events (device changes, screenshots, errors) to help us improve. Enabled by default — turn off any time. Never includes URLs, page content, or personal info. Full schema: docs/ANALYTICS_EVENTS.md">
+              <span class="gi-text">Help improve Mobile Simulator</span>
+              <input type="checkbox" id="toggle-analytics" class="toggle-input" checked="">
+              <span class="toggle-switch"></span>
+            </label>
+          </div>
+        </section>
+      </div>
+    </aside></template></div></body></html>
