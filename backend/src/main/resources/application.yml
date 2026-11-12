@@ -1,0 +1,61 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: dhandha-backend
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:dhandha_db}
+    username: ${DB_USER:dhandha_user}
+    password: ${DB_PASSWORD:dhandha_secure_password_2024}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 3000
+
+# DHANDHA Custom Marketplace Configuration
+dhandha:
+  jwt:
+    secret: ${JWT_SECRET:dhandha_jwt_super_secret_signing_key_min_256_bits_for_hmac_sha256}
+    expiration-hours: 24
+    refresh-expiration-days: 30
+
+  razorpay:
+    key-id: ${RAZORPAY_KEY_ID:rzp_test_placeholder}
+    key-secret: ${RAZORPAY_KEY_SECRET:rzp_secret_placeholder}
+    webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:rzp_webhook_placeholder}
+
+  commissions:
+    cook-booking-percent: 5.0
+    chef-booking-percent: 8.0
+    food-order-percent: 10.0
+
+  features:
+    maps-enabled: ${MAPS_ENABLED:false}
+
+springdoc:
+  api-docs:
+    path: /docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method

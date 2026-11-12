@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # PostgreSQL Database (Primary Data Store)
+  # ============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: dhandha-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: dhandha_db
+      POSTGRES_USER: dhandha_user
+      POSTGRES_PASSWORD: dhandha_secure_password_2024
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dhandha_user -d dhandha_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dhandha-net
+
+  # ============================================================================
+  # Redis (Cache, Rate Limiting & Session Store)
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: dhandha-redis
+    restart: always
+    command: redis-server --save 60 1 --loglevel warning
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - dhandha-net
+
+  # ============================================================================
+  # Spring Boot Backend (Modular Monolith REST API)
+  # ============================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dhandha-backend
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: dhandha_db
+      DB_USER: dhandha_user
+      DB_PASSWORD: dhandha_secure_password_2024
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: your_jwt_super_secret_key_minimum_256_bits_length_for_sha256
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-rzp_test_placeholder}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-rzp_secret_placeholder}
+    ports:
+      - "8080:8080"
+    networks:
+      - dhandha-net
+
+  # ============================================================================
+  # Next.js Frontend Application
+  # ============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dhandha-frontend
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:8080/api/v1
+    ports:
+      - "3000:3000"
+    networks:
+      - dhandha-net
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  dhandha-net:
+    driver: bridge
