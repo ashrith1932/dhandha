@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { SectionContainer } from "@/components/layout/section";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -53,6 +54,7 @@ export default function SettingsPage() {
   ]);
 
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const { toast } = useToast();
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +64,7 @@ export default function SettingsPage() {
 
   return (
     <MainLayout>
-      <div className="bg-prussian text-white py-8 border-b border-white/10">
+      <div className="band-dark bg-noise relative overflow-hidden text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-1">
           <Badge variant="saffron" className="text-xs font-bold">
             Account Preferences
@@ -196,7 +198,7 @@ export default function SettingsPage() {
                     ) : (
                       <div />
                     )}
-                    <Button type="submit" className="bg-saffron hover:bg-saffron-dark text-white rounded-xl text-xs font-bold px-6">
+                    <Button type="submit" className="rounded-xl text-xs font-bold px-6">
                       Save Changes
                     </Button>
                   </div>
@@ -215,7 +217,7 @@ export default function SettingsPage() {
                       Used for food delivery and home cook visits (Private coordinates)
                     </p>
                   </div>
-                  <Button size="sm" className="bg-saffron hover:bg-saffron-dark text-white rounded-xl text-xs font-bold gap-1">
+                  <Button size="sm" className="rounded-xl text-xs font-bold gap-1">
                     <Plus className="w-3.5 h-3.5" />
                     <span>Add New</span>
                   </Button>
@@ -246,8 +248,12 @@ export default function SettingsPage() {
 
                       <button
                         type="button"
+                        onClick={() => {
+                          setAddresses((prev) => prev.filter((a) => a.id !== addr.id));
+                          toast("Address removed", { description: `${addr.label} address was deleted.`, variant: "info" });
+                        }}
                         className="text-text-muted hover:text-danger p-1 rounded-lg transition-colors"
-                        aria-label="Delete address"
+                        aria-label={`Delete ${addr.label} address`}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

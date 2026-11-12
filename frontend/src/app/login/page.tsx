@@ -10,9 +10,12 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ToastProvider, useToast } from "@/components/ui/toast";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const { toast } = useToast();
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -28,13 +31,26 @@ export default function LoginPage() {
     }, 500);
   };
 
+  React.useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = window.setInterval(() => setResendCooldown((v) => Math.max(0, v - 1)), 1000);
+    return () => window.clearInterval(t);
+  }, [resendCooldown]);
+
+  const handleResend = () => {
+    if (resendCooldown > 0) return;
+    setResendCooldown(30);
+    toast("Code resent", { description: `A fresh OTP was sent to +91 ${phoneNumber}.` });
+  };
+
   const handleVerifyOtp = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
+      toast("Namaste, Priya!", { description: "Welcome back to your kitchen dashboard." });
       router.push("/dashboard");
-    }, 500);
+    }, 700);
   };
 
   return (
@@ -42,7 +58,10 @@ export default function LoginPage() {
       {/* Modal / Card Container matching media_1794460711922_654d5bf0.png */}
       <div className="w-full max-w-md bg-white rounded-none sm:rounded-[32px] overflow-hidden shadow-2xl flex flex-col min-h-screen sm:min-h-0 border border-gray-100">
         {/* Top Hero Banner (Purple/Violet Geometric Gradient) */}
-        <div className="relative h-64 sm:h-72 bg-gradient-to-br from-[#7A28CB] via-[#5B1EB5] to-[#2B1066] p-8 flex flex-col items-center justify-center text-center text-white overflow-hidden">
+        <div className="relative h-64 sm:h-72 bg-gradient-to-br from-[#232B4E] via-[#161B33] to-[#0D0C1D] p-8 flex flex-col items-center justify-center text-center text-white overflow-hidden">
+          {/* Ambient ember glow */}
+          <div aria-hidden className="absolute -top-16 -right-16 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(242,140,40,0.4),transparent_70%)] blur-3xl" />
+          <div aria-hidden className="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(228,90,55,0.35),transparent_70%)] blur-3xl" />
           {/* Subtle geometric polygon background lines */}
           <div className="absolute inset-0 opacity-20 pointer-events-none">
             <svg viewBox="0 0 400 300" className="w-full h-full" preserveAspectRatio="none">
@@ -56,13 +75,13 @@ export default function LoginPage() {
             <span className="font-heading font-black text-4xl sm:text-5xl tracking-tight text-white drop-shadow-md">
               dhandha
             </span>
-            <span className="text-[11px] font-bold tracking-[0.25em] text-purple-200 uppercase">
+            <span className="text-[11px] font-bold tracking-[0.25em] text-[#FFB03A]/90 uppercase">
               BY DHANDHA
             </span>
           </div>
 
           {/* Tagline matching reference */}
-          <p className="relative z-10 text-xs sm:text-sm text-purple-100 font-medium max-w-xs mt-4 leading-relaxed">
+          <p className="relative z-10 text-xs sm:text-sm text-almond/90 font-medium max-w-xs mt-4 leading-relaxed">
             Experience the best in Home Cooks, Private Chefs, and Homemade Kitchens.
           </p>
         </div>
@@ -85,7 +104,7 @@ export default function LoginPage() {
             {!otpSent ? (
               <form onSubmit={handleContinue} className="space-y-4">
                 {/* Phone Input with +91 Country selector */}
-                <div className="flex items-center rounded-2xl border border-gray-200 focus-within:border-indigo-600 focus-within:ring-2 focus-within:ring-indigo-600/20 bg-white overflow-hidden transition-all h-13 shadow-xs">
+                <div className="flex items-center rounded-2xl border border-gray-200 focus-within:border-saffron focus-within:ring-2 focus-within:ring-saffron/25 bg-white overflow-hidden transition-all h-13 shadow-xs">
                   {/* Flag & Dial code */}
                   <div className="flex items-center gap-1.5 px-3.5 border-r border-gray-200 text-sm font-semibold text-ink-black shrink-0 bg-gray-50/50 h-full">
                     <span>🇮🇳</span>
@@ -105,10 +124,10 @@ export default function LoginPage() {
                 </div>
 
                 {/* Continue Dark Pill Button matching media_1794460711922_654d5bf0.png */}
-                <Button
+                <Button variant="dark"
                   type="submit"
                   disabled={isLoading || phoneNumber.length < 10}
-                  className="w-full h-12 sm:h-13 bg-[#111116] hover:bg-black text-white font-bold rounded-2xl text-sm transition-all shadow-md cursor-pointer disabled:opacity-50"
+                  className="w-full h-12 sm:h-13 rounded-2xl text-sm"
                 >
                   {isLoading ? "Please wait..." : "Continue"}
                 </Button>
@@ -134,7 +153,7 @@ export default function LoginPage() {
                           document.getElementById(`otp-${index + 1}`)?.focus();
                         }
                       }}
-                      className="w-full h-12 text-center text-lg font-bold rounded-xl border border-gray-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 bg-gray-50 focus:bg-white focus:outline-none"
+                      className="w-full h-12 text-center text-lg font-bold rounded-xl border border-gray-200 focus:border-saffron focus:ring-2 focus:ring-saffron/25 bg-gray-50 focus:bg-white focus:outline-none"
                     />
                   ))}
                 </div>
@@ -142,7 +161,7 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={isLoading || otp.join("").length < 6}
-                  className="w-full h-12 sm:h-13 bg-indigo-700 hover:bg-indigo-800 text-white font-bold rounded-2xl text-sm transition-all shadow-md cursor-pointer"
+                  className="w-full h-12 sm:h-13 bg-gradient-to-r from-[#F28C28] to-[#E45A37] hover:from-[#FFB03A] hover:to-[#F28C28] text-white font-bold rounded-2xl text-sm transition-all shadow-md cursor-pointer"
                 >
                   {isLoading ? "Verifying..." : "Verify & Sign In"}
                 </Button>
@@ -151,16 +170,17 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setOtpSent(false)}
-                    className="text-indigo-600 font-semibold hover:underline"
+                    className="text-saffron-dark font-bold hover:underline"
                   >
                     Change Number
                   </button>
                   <button
                     type="button"
-                    onClick={() => {}}
-                    className="text-gray-500 hover:text-ink-black"
+                    onClick={handleResend}
+                    disabled={resendCooldown > 0}
+                    className="text-gray-500 hover:text-ink-black disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
                   >
-                    Resend Code
+                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
                   </button>
                 </div>
               </form>
@@ -183,5 +203,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <ToastProvider>
+      <LoginForm />
+    </ToastProvider>
   );
 }

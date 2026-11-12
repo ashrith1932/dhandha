@@ -98,7 +98,7 @@ function CookProfileDetailContent() {
                   className={cn(
                     "relative h-18 sm:h-22 rounded-lg overflow-hidden border-2 transition-all cursor-pointer",
                     activeHeroImage === thumb
-                      ? "border-indigo-600 ring-2 ring-indigo-600/30"
+                      ? "border-saffron ring-2 ring-saffron/30"
                       : "border-transparent opacity-80 hover:opacity-100"
                   )}
                 >
@@ -165,7 +165,7 @@ function CookProfileDetailContent() {
                   key={idx}
                   className="border border-gray-200/90 rounded-xl p-2.5 flex items-center gap-2.5 bg-white"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-indigo-700 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-saffron-subtle text-saffron-dark flex items-center justify-center shrink-0">
                     {idx === 0 && <Clock className="w-3.5 h-3.5" />}
                     {idx === 1 && <Users className="w-3.5 h-3.5" />}
                     {idx === 2 && <MapPin className="w-3.5 h-3.5" />}
@@ -247,7 +247,7 @@ function CookProfileDetailContent() {
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full h-8.5 px-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-prussian focus:outline-none focus:ring-1.5 focus:ring-indigo-600"
+                    className="w-full h-8.5 px-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-prussian focus:outline-none focus:ring-1.5 focus:ring-saffron"
                   />
                 </div>
 
@@ -289,9 +289,9 @@ function CookProfileDetailContent() {
                   </p>
                 </div>
               ) : (
-                <Button
+                <Button variant="secondary"
                   type="submit"
-                  className="w-full h-9 bg-indigo-700 hover:bg-indigo-800 text-white font-bold rounded-lg text-xs shadow-xs transition-colors"
+                  className="w-full h-10 rounded-xl text-xs"
                 >
                   Book 1-Day Trial Experience
                 </Button>
@@ -321,7 +321,7 @@ function CookProfileDetailContent() {
                 {cook.cuisines.map((c) => (
                   <span
                     key={c.id}
-                    className="px-2.5 py-1 rounded-lg bg-purple-50 text-indigo-950 text-xs font-semibold"
+                    className="px-2.5 py-1 rounded-lg bg-saffron-subtle text-saffron-dark text-xs font-semibold"
                   >
                     {c.name}
                   </span>
@@ -418,7 +418,7 @@ function CookProfileDetailContent() {
           {/* Side Sticky Card (4 cols) */}
           <div className="lg:col-span-4">
             <aside className="sticky top-24 border border-gray-200 rounded-xl p-4 shadow-xs bg-white space-y-3">
-              <div className="p-3 rounded-lg bg-purple-50/60 border border-purple-100">
+              <div className="p-3 rounded-lg bg-saffron-subtle/60 border border-saffron/20">
                 <span className="text-[10px] text-gray-400 block uppercase font-semibold">Starting from</span>
                 <div className="text-xl font-heading font-bold text-prussian">
                   {formatCurrency(cook.expectedSalaryMin || 15000)}

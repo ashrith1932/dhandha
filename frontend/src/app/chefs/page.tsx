@@ -36,16 +36,18 @@ export default function ChefsPage() {
   return (
     <MainLayout>
       {/* Compact Hero Banner */}
-      <div className="bg-gradient-to-r from-[#1B153D] via-[#2A1F5E] to-[#161B33] text-white py-6 sm:py-8 border-b border-white/10 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 relative z-10">
-          <Badge variant="saffron" className="text-[10px] font-bold py-0 px-2">
-            Executive Dining & Private Chefs
-          </Badge>
-          <h1 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight">
-            Book an Executive Chef for Your Special Occasion
+      <div className="band-dark bg-noise relative overflow-hidden text-white">
+        <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(139,123,255,0.3),transparent_70%)] blur-3xl" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-3.5">
+          <span className="inline-flex items-center gap-2 rounded-full border border-saffron/35 bg-saffron/10 px-3 py-1 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-[#FFB03A]">
+            <Sparkles className="h-3.5 w-3.5" /> Executive Dining & Private Chefs
+          </span>
+          <h1 className="font-heading text-3xl sm:text-5xl font-extrabold tracking-[-0.04em] leading-[1.02] max-w-3xl">
+            Book an executive chef<br className="hidden sm:block" />
+            <span className="text-gradient-gold"> for your special occasion.</span>
           </h1>
-          <p className="text-xs sm:text-sm text-gray-300 max-w-xl leading-relaxed">
-            Elevate house parties, bespoke celebrations, and multi-course dinners with five-star culinary talent.
+          <p className="text-xs sm:text-sm text-white/65 max-w-xl leading-relaxed">
+            House parties, bespoke celebrations and multi-course dinners with five-star culinary talent — cooked live in your kitchen.
           </p>
 
           {/* Quick Experience Pills */}
@@ -58,7 +60,7 @@ export default function ChefsPage() {
                 className={cn(
                   "px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer",
                   selectedCategory === cat.id
-                    ? "bg-purple-100 text-indigo-950 font-bold shadow-xs"
+                    ? "bg-[#FFB03A] text-ink-black font-black shadow-glow-soft"
                     : "bg-white/10 hover:bg-white/15 text-gray-300 border border-white/10"
                 )}
               >
@@ -77,7 +79,7 @@ export default function ChefsPage() {
             return (
               <Card
                 key={service.id}
-                className="overflow-hidden border border-gray-200/90 hover:border-indigo-600 hover:shadow-card-hover transition-all flex flex-col justify-between rounded-2xl bg-white group"
+                className="overflow-hidden border border-gray-200/90 hover:border-saffron hover:shadow-card-hover transition-all flex flex-col justify-between rounded-2xl bg-white group"
               >
                 <div>
                   {/* Photo Banner */}
@@ -100,7 +102,7 @@ export default function ChefsPage() {
 
                   <div className="p-4 space-y-3">
                     <div>
-                      <h3 className="font-heading font-bold text-base text-prussian group-hover:text-indigo-700 transition-colors">
+                      <h3 className="font-heading font-bold text-base text-prussian group-hover:text-ember transition-colors">
                         {service.serviceType}
                       </h3>
                       <p className="text-[11px] text-gray-600 line-clamp-2 mt-1 leading-relaxed">
@@ -121,7 +123,7 @@ export default function ChefsPage() {
                       </div>
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="text-gray-500">Master Chef:</span>
-                        <span className="font-bold text-indigo-950">
+                        <span className="font-bold text-prussian">
                           Chef {service.cook?.user?.fullName}
                         </span>
                       </div>
@@ -155,7 +157,7 @@ export default function ChefsPage() {
                     )}
 
                     <Link href={`/chefs/${service.id}`}>
-                      <Button className="h-8 bg-prussian hover:bg-indigo-700 text-white rounded-lg px-3.5 text-xs font-bold">
+                      <Button variant="secondary" className="h-9 rounded-xl px-4 text-xs font-bold">
                         Book
                       </Button>
                     </Link>

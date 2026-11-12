@@ -34,7 +34,7 @@ export default function UniversalDashboardPage() {
   return (
     <MainLayout>
       {/* Universal Account Header */}
-      <div className="bg-prussian text-white py-8 sm:py-12 border-b border-white/10">
+      <div className="band-dark bg-noise relative overflow-hidden text-white py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
@@ -164,7 +164,7 @@ export default function UniversalDashboardPage() {
                   </p>
                 </div>
                 <Link href="/jobs/post?type=HOUSEHOLD">
-                  <Button size="sm" className="bg-saffron hover:bg-saffron-dark text-white rounded-xl text-xs font-bold gap-1">
+                  <Button size="sm" className="rounded-xl text-xs font-bold gap-1">
                     <PlusCircle className="w-3.5 h-3.5" />
                     <span>Post New</span>
                   </Button>

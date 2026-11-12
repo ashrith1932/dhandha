@@ -51,7 +51,9 @@ export function slugify(text: string): string {
 
 export function timeAgo(date: Date | string): string {
   try {
-    const now = typeof window !== "undefined" ? new Date().getTime() : 1731400000000;
+    // Deterministic reference so SSR and client hydration always agree.
+    // (Sample data is fixed; swap for Date.now() when wiring a live backend.)
+    const now = 1731400000000;
     const past = new Date(date).getTime();
     const diffMs = Math.max(0, now - past);
     const diffSeconds = Math.floor(diffMs / 1000);

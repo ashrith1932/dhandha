@@ -1,44 +1,94 @@
 @import "tailwindcss";
 
+/* ============================================================
+   DHANDHA — Modern Design System
+   "Kaam bhi. Khana bhi." — India's Cooking Marketplace
+   Inspired by District (Zomato) consumer app aesthetics:
+   warm paper backgrounds, ink typography, ember-saffron gradients,
+   deep prussian darks, glass surfaces and springy micro-interactions.
+   ============================================================ */
+
 @theme inline {
-  --color-background: #FCF8F3;
+  /* ---- Brand core ---- */
+  --color-background: #FAF6EF;
   --color-surface: #FFFFFF;
-  --color-border: #E8E3DC;
-  --color-border-subtle: #F0ECE6;
+  --color-surface-raised: #FFFDF9;
+  --color-border: #EAE2D5;
+  --color-border-subtle: #F2EDE3;
   --color-text-primary: #161B33;
-  --color-text-secondary: #5F6280;
-  --color-text-muted: #8E92AC;
+  --color-text-secondary: #565A78;
+  --color-text-muted: #8B8FAC;
+
   --color-ink-black: #0D0C1D;
   --color-prussian: #161B33;
   --color-prussian-light: #2A3258;
+  --color-prussian-600: #232B4E;
   --color-grape: #474973;
+  --color-grape-100: #E9E9F1;
+  --color-grape-200: #D4D4E4;
+  --color-grape-700: #3A3C5E;
+  --color-grape-900: #262741;
   --color-almond: #F1DAC4;
   --color-almond-light: #FCF8F3;
+  --color-almond-900: #F6EFE6;
+  --color-almond-800: #EDE2D3;
+  --color-almond-600: #B9AA97;
+  --color-almond-500: #CDBEA9;
+  --color-almond-400: #D8CBBA;
+  --color-almond-200: #EAE1D3;
   --color-lilac: #A69CAC;
+
+  /* ---- Ember / saffron gradient family ---- */
   --color-saffron: #F28C28;
-  --color-saffron-light: #FFB45E;
+  --color-saffron-bright: #FFB03A;
+  --color-saffron-light: #FFC87A;
   --color-saffron-dark: #C96813;
-  --color-saffron-subtle: #FFF2E5;
-  --color-success: #23865B;
-  --color-success-light: #EBF7F1;
+  --color-saffron-deep: #A95210;
+  --color-saffron-subtle: #FFF3E2;
+  --color-ember: #E45A37;
+  --color-ember-deep: #C2401F;
+
+  /* ---- Status ---- */
+  --color-success: #1E8A5A;
+  --color-success-light: #E9F7EF;
   --color-warning: #D18B27;
-  --color-warning-light: #FFF8EB;
+  --color-warning-light: #FFF6E5;
   --color-danger: #C94B4B;
-  --color-danger-light: #FDF0F0;
+  --color-danger-light: #FCECEC;
+
+  /* ---- Type ---- */
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-heading: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 0.875rem;
-  --radius-xl: 1.125rem;
-  --radius-2xl: 1.375rem;
+
+  /* ---- Radii ---- */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
   --radius-full: 9999px;
-  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
-  --shadow-card: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
-  --shadow-card-hover: 0 8px 20px rgba(22, 27, 51, 0.08);
-  --shadow-elevated: 0 12px 28px rgba(22, 27, 51, 0.1);
-  --shadow-modal: 0 20px 48px rgba(13, 12, 29, 0.18);
+
+  /* ---- Elevation ---- */
+  --shadow-xs: 0 1px 2px rgba(22, 27, 51, 0.06);
+  --shadow-card: 0 1px 2px rgba(22, 27, 51, 0.05), 0 4px 14px rgba(22, 27, 51, 0.05);
+  --shadow-card-hover: 0 2px 4px rgba(22, 27, 51, 0.06), 0 18px 40px -12px rgba(22, 27, 51, 0.22);
+  --shadow-elevated: 0 24px 56px -16px rgba(13, 12, 29, 0.35);
+  --shadow-modal: 0 32px 80px -20px rgba(13, 12, 29, 0.45);
+  --shadow-glow: 0 10px 36px -8px rgba(242, 140, 40, 0.55);
+  --shadow-glow-soft: 0 8px 30px -10px rgba(242, 140, 40, 0.4);
+  --shadow-inner-light: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
+
+/* Self-hosted font stacks (see layout.tsx — @fontsource imports) */
+:root {
+  --font-inter: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-plus-jakarta: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
 
 * {
   border-color: var(--color-border);
@@ -57,7 +107,8 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
 }
 
 button, a, input, select, textarea {
@@ -67,37 +118,171 @@ button, a, input, select, textarea {
 *:focus-visible {
   outline: 2px solid var(--color-saffron);
   outline-offset: 2px;
+  border-radius: 4px;
 }
 
-.font-heading {
-  font-family: var(--font-heading);
+::selection {
+  background: rgba(242, 140, 40, 0.28);
+  color: var(--color-ink-black);
 }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Refined scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D8CDBE; border-radius: 999px; border: 2px solid var(--color-background); }
+::-webkit-scrollbar-thumb:hover { background: #C4B6A3; }
+
+.font-heading { font-family: var(--font-heading); }
+
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ============================================================
+   Signature utilities & effects
+   ============================================================ */
+
+/* Warm ember gradient text */
+.text-gradient-warm {
+  background: linear-gradient(105deg, #FFB03A 0%, #F28C28 38%, #E45A37 75%, #C2401F 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradient-pan 6s ease-in-out infinite alternate;
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.text-gradient-gold {
+  background: linear-gradient(100deg, #FFE29A 0%, #FFC87A 35%, #F28C28 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
-/* Compact District Card Styles */
+/* Aurora / mesh gradients for hero & dark bands */
+.bg-aurora-light {
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(255, 200, 122, 0.5), transparent 55%),
+    radial-gradient(900px 480px at -10% 15%, rgba(242, 140, 40, 0.22), transparent 55%),
+    radial-gradient(760px 500px at 55% 115%, rgba(228, 90, 55, 0.18), transparent 60%),
+    var(--color-background);
+}
+
+.bg-aurora-dark {
+  background:
+    radial-gradient(1100px 560px at 78% -18%, rgba(242, 140, 40, 0.32), transparent 55%),
+    radial-gradient(800px 520px at 8% -12%, rgba(122, 40, 203, 0.36), transparent 55%),
+    radial-gradient(900px 700px at 50% 130%, rgba(71, 73, 115, 0.42), transparent 60%),
+    linear-gradient(160deg, #0D0C1D 0%, #161B33 58%, #1B2140 100%);
+}
+
+/* Film-grain noise overlay (SVG turbulence) */
+.bg-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Dot mesh backdrop for light sections */
+.bg-dots {
+  background-image: radial-gradient(rgba(22, 27, 51, 0.13) 1px, transparent 1.1px);
+  background-size: 22px 22px;
+}
+
+.bg-dots-light {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1.1px);
+  background-size: 24px 24px;
+}
+
+/* Glass surfaces */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+}
+
+.glass-dark {
+  background: rgba(22, 27, 51, 0.55);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+/* Interactive card hover — springy lift + deep warm shadow */
+.card-hover {
+  transition: transform 0.45s cubic-bezier(0.22, 1.4, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+  will-change: transform;
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Shine sweep for primary CTAs */
+.shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.shine::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  left: -80%;
+  width: 55%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.65) 50%, transparent);
+  transform: skewX(-22deg);
+  transition: none;
+  pointer-events: none;
+  z-index: 0;
+}
+.shine:hover::before {
+  animation: shine-sweep 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Press feedback */
+.tap { transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.tap:active { transform: scale(0.96); }
+
+/* Animated gradient border (ember ring) */
+.gradient-ring {
+  position: relative;
+  background: linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
+    linear-gradient(135deg, #FFC87A, #F28C28 35%, #E45A37 70%, #474973) border-box;
+  border: 1.5px solid transparent;
+}
+
+/* Dark CTA band with inner glow */
+.band-dark {
+  background:
+    radial-gradient(900px 320px at 50% 0%, rgba(242, 140, 40, 0.28), transparent 60%),
+    linear-gradient(150deg, #0D0C1D 0%, #161B33 55%, #20264A 100%);
+}
+
+/* Card compact hover */
 .card-compact {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s cubic-bezier(0.22, 1.4, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
-
 .card-compact:hover {
-  border-color: #D4CDCA;
+  border-color: #E2CBB4;
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
 }
 
-/* Horizontal scroll peek container */
+/* Horizontal scroll peek containers */
 .horizontal-scroll-container {
   display: flex;
   overflow-x: auto;
@@ -106,8 +291,141 @@ button, a, input, select, textarea {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
+.horizontal-scroll-item { flex-shrink: 0; scroll-snap-align: start; }
 
-.horizontal-scroll-item {
-  flex-shrink: 0;
-  scroll-snap-align: start;
+/* Marquee rows */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
 }
+.marquee-slow { animation-duration: 55s; }
+.marquee-reverse { animation-direction: reverse; }
+.marquee-paused:hover .marquee { animation-play-state: paused; }
+
+/* Floating chips / orbit */
+.float-soft { animation: float-soft 5.5s ease-in-out infinite; }
+.float-soft-delay { animation: float-soft 6.5s ease-in-out 1.2s infinite; }
+.float-soft-slow { animation: float-soft 8s ease-in-out 0.6s infinite; }
+.spin-slower { animation: spin 22s linear infinite; }
+
+/* Live pulse dot */
+.pulse-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  animation: pulse-ring 2.1s cubic-bezier(0.2, 0.6, 0.36, 1) infinite;
+  background: inherit;
+}
+
+/* Scroll reveal (paired with Reveal component) */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px) scale(0.985);
+  filter: blur(6px);
+  transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), filter 0.7s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .marquee, .float-soft, .float-soft-delay, .float-soft-slow, .text-gradient-warm { animation: none !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* No-JS fallback — content must never stay invisible */
+@media (scripting: none) {
+  .reveal { opacity: 1; transform: none; filter: none; }
+}
+
+/* Shimmer for skeletons */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background: #EFE9DE;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.85) 50%, transparent 80%);
+  animation: shimmer 1.6s infinite;
+  transform: translateX(-100%);
+}
+
+/* ============================================================
+   Keyframes
+   ============================================================ */
+
+@keyframes gradient-pan {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+@keyframes shine-sweep {
+  from { left: -80%; }
+  to { left: 140%; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.7; }
+  80%, 100% { transform: scale(2.6); opacity: 0; }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in { animation: fade-in 0.5s ease both; }
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in { animation: scale-in 0.45s cubic-bezier(0.22, 1.4, 0.36, 1) both; }
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(48px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slide-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-toast-in { animation: toast-in 0.35s cubic-bezier(0.22, 1.4, 0.36, 1) both; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes ping-soft {
+  0% { transform: scale(1); opacity: 0.6; }
+  75%, 100% { transform: scale(1.9); opacity: 0; }
+}
+.animate-ping-soft { animation: ping-soft 2.4s cubic-bezier(0, 0, 0.2, 1) infinite; }
