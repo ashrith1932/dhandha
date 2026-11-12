@@ -67,6 +67,12 @@ export interface Cuisine {
   name: string;
 }
 
+export interface QuickFact {
+  icon: string;
+  label: string;
+  value: string;
+}
+
 export interface CookProfile {
   id: string;
   userId: string;
@@ -88,6 +94,14 @@ export interface CookProfile {
   skills: CookSkill[];
   city?: string;
   locality?: string;
+  whatsappNumber?: string;
+  allowWhatsappChat?: boolean;
+  allowWhatsappCall?: boolean;
+  galleryImages?: string[];
+  shifts?: string[];
+  quickFacts?: QuickFact[];
+  whatsIncluded?: string[];
+  whatsExcluded?: string[];
 }
 
 export interface CookSkill {
@@ -116,6 +130,14 @@ export interface ChefService {
   minimumGuests?: number;
   maximumGuests?: number;
   active: boolean;
+  whatsappNumber?: string;
+  allowWhatsappChat?: boolean;
+  allowWhatsappCall?: boolean;
+  galleryImages?: string[];
+  shifts?: string[];
+  quickFacts?: QuickFact[];
+  whatsIncluded?: string[];
+  whatsExcluded?: string[];
 }
 
 // ===== Restaurant Types =====
@@ -194,7 +216,7 @@ export interface FoodProvider {
   user?: User;
   restaurantId?: string;
   providerName: string;
-  providerType: ProviderType;
+  providerType: ProviderType; // ONLY HOME_COOK / TIFFIN_SERVICE allowed to sell food!
   description?: string;
   verificationStatus: VerificationStatus;
   active: boolean;
@@ -202,6 +224,10 @@ export interface FoodProvider {
   totalReviews?: number;
   city?: string;
   locality?: string;
+  whatsappNumber?: string;
+  allowWhatsappChat?: boolean;
+  allowWhatsappCall?: boolean;
+  fssaiNumber?: string;
 }
 
 export interface FoodListing {
@@ -213,12 +239,15 @@ export interface FoodListing {
   category: string;
   price: number;
   imageUrl?: string;
+  galleryImages?: string[];
   dietaryType: DietaryType;
   preparationTime?: number;
   availabilityStatus: "AVAILABLE" | "SOLD_OUT" | "UNAVAILABLE";
   rating?: number;
   totalOrders?: number;
   createdAt: string;
+  whatsIncluded?: string[];
+  whatsExcluded?: string[];
 }
 
 // ===== Order Types =====

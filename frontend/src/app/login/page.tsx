@@ -4,18 +4,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Phone,
-  ShieldCheck,
+  ChevronDown,
   ArrowRight,
-  Flame,
+  ShieldCheck,
   CheckCircle2,
-  Sparkles,
 } from "lucide-react";
-import { Logo } from "@/components/layout/logo";
-import { ThreeDElement } from "@/components/common/three-d-element";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,14 +18,14 @@ export default function LoginPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
     if (phoneNumber.length < 10) return;
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
       setOtpSent(true);
-    }, 600);
+    }, 500);
   };
 
   const handleVerifyOtp = (e: React.FormEvent) => {
@@ -40,200 +34,152 @@ export default function LoginPage() {
     setTimeout(() => {
       setIsLoading(false);
       router.push("/dashboard");
-    }, 600);
+    }, 500);
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-background">
-      {/* Left Column: Form Area (District Style) */}
-      <div className="lg:col-span-6 flex flex-col justify-between p-6 sm:p-12 xl:p-16">
-        <div>
-          <Logo size="md" showTagline={true} />
-        </div>
-
-        <div className="max-w-md w-full mx-auto my-12 space-y-6">
-          <div className="space-y-1.5">
-            <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-prussian">
-              {otpSent ? "Verify your phone" : "Welcome to DHANDHA"}
-            </h1>
-            <p className="text-xs sm:text-sm text-text-secondary">
-              {otpSent
-                ? `Enter the 6-digit OTP sent to +91 ${phoneNumber}`
-                : "Enter your mobile number to sign in or create an account"}
-            </p>
+    <div className="min-h-screen bg-black/40 flex items-center justify-center p-0 sm:p-4 font-sans">
+      {/* Modal / Card Container matching media_1794460711922_654d5bf0.png */}
+      <div className="w-full max-w-md bg-white rounded-none sm:rounded-[32px] overflow-hidden shadow-2xl flex flex-col min-h-screen sm:min-h-0 border border-gray-100">
+        {/* Top Hero Banner (Purple/Violet Geometric Gradient) */}
+        <div className="relative h-64 sm:h-72 bg-gradient-to-br from-[#7A28CB] via-[#5B1EB5] to-[#2B1066] p-8 flex flex-col items-center justify-center text-center text-white overflow-hidden">
+          {/* Subtle geometric polygon background lines */}
+          <div className="absolute inset-0 opacity-20 pointer-events-none">
+            <svg viewBox="0 0 400 300" className="w-full h-full" preserveAspectRatio="none">
+              <polygon points="0,0 200,300 400,0" fill="white" />
+              <polygon points="400,300 200,0 0,300" fill="white" opacity="0.4" />
+            </svg>
           </div>
 
-          {!otpSent ? (
-            <form onSubmit={handleSendOtp} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-prussian uppercase tracking-wider block">
-                  Mobile Number
-                </label>
-                <div className="flex rounded-2xl border border-border bg-surface overflow-hidden focus-within:ring-2 focus-within:ring-saffron shadow-xs">
-                  <div className="flex items-center gap-1.5 px-3.5 bg-almond-900/60 border-r border-border text-xs font-bold text-prussian shrink-0">
+          {/* Logo: dhandha BY DHANDHA */}
+          <div className="relative z-10 flex flex-col items-center space-y-1">
+            <span className="font-heading font-black text-4xl sm:text-5xl tracking-tight text-white drop-shadow-md">
+              dhandha
+            </span>
+            <span className="text-[11px] font-bold tracking-[0.25em] text-purple-200 uppercase">
+              BY DHANDHA
+            </span>
+          </div>
+
+          {/* Tagline matching reference */}
+          <p className="relative z-10 text-xs sm:text-sm text-purple-100 font-medium max-w-xs mt-4 leading-relaxed">
+            Experience the best in Home Cooks, Private Chefs, and Homemade Kitchens.
+          </p>
+        </div>
+
+        {/* Bottom Form Sheet matching media_1794460711922_654d5bf0.png */}
+        <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-6 bg-white">
+          <div className="space-y-6">
+            {/* Header Text */}
+            <div className="space-y-1 text-center sm:text-left">
+              <h1 className="text-xl sm:text-2xl font-heading font-bold text-ink-black tracking-tight">
+                {otpSent ? "Enter 6-digit OTP" : "Enter your mobile number"}
+              </h1>
+              <p className="text-xs sm:text-sm text-gray-500">
+                {otpSent
+                  ? `We've sent an SMS verification code to +91 ${phoneNumber}`
+                  : "If you don't have an account yet, we'll create one for you"}
+              </p>
+            </div>
+
+            {!otpSent ? (
+              <form onSubmit={handleContinue} className="space-y-4">
+                {/* Phone Input with +91 Country selector */}
+                <div className="flex items-center rounded-2xl border border-gray-200 focus-within:border-indigo-600 focus-within:ring-2 focus-within:ring-indigo-600/20 bg-white overflow-hidden transition-all h-13 shadow-xs">
+                  {/* Flag & Dial code */}
+                  <div className="flex items-center gap-1.5 px-3.5 border-r border-gray-200 text-sm font-semibold text-ink-black shrink-0 bg-gray-50/50 h-full">
                     <span>🇮🇳</span>
                     <span>+91</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
                   </div>
+
                   <input
                     type="tel"
                     required
                     maxLength={10}
                     value={phoneNumber}
-                    onChange={(e) =>
-                      setPhoneNumber(e.target.value.replace(/\D/g, ""))
-                    }
-                    placeholder="98765 43210"
-                    className="flex-1 h-12 px-3.5 text-sm font-semibold tracking-wide text-prussian placeholder:text-text-muted focus:outline-none"
+                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
+                    placeholder="Enter mobile number"
+                    className="flex-1 h-full px-4 text-sm sm:text-base font-semibold text-ink-black placeholder:text-gray-400 focus:outline-none"
                   />
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                disabled={isLoading || phoneNumber.length < 10}
-                className="w-full h-12 bg-saffron hover:bg-saffron-dark text-white font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm"
-              >
-                {isLoading ? "Sending OTP..." : "Continue with OTP"}
-              </Button>
-
-              <div className="relative my-6 text-center">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border" />
-                </div>
-                <span className="relative px-3 bg-background text-[11px] font-bold text-text-muted uppercase">
-                  or
-                </span>
-              </div>
-
-              {/* Real Google OAuth Button */}
-              <button
-                type="button"
-                onClick={() => router.push("/dashboard")}
-                className="w-full h-12 rounded-2xl border border-border bg-surface hover:bg-almond-900/40 text-prussian font-bold text-xs flex items-center justify-center gap-3 transition-all shadow-xs cursor-pointer"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
-                  <path
-                    fill="#4285F4"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                  />
-                </svg>
-                <span>Continue with Google</span>
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-prussian uppercase tracking-wider block">
-                  Enter 6-digit OTP
-                </label>
-                <div className="flex gap-2 justify-between">
-                  {[0, 1, 2, 3, 4, 5].map((idx) => (
+                {/* Continue Dark Pill Button matching media_1794460711922_654d5bf0.png */}
+                <Button
+                  type="submit"
+                  disabled={isLoading || phoneNumber.length < 10}
+                  className="w-full h-12 sm:h-13 bg-[#111116] hover:bg-black text-white font-bold rounded-2xl text-sm transition-all shadow-md cursor-pointer disabled:opacity-50"
+                >
+                  {isLoading ? "Please wait..." : "Continue"}
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp} className="space-y-4">
+                {/* OTP Digits */}
+                <div className="grid grid-cols-6 gap-2">
+                  {otp.map((digit, index) => (
                     <input
-                      key={idx}
+                      key={index}
+                      id={`otp-${index}`}
                       type="text"
+                      inputMode="numeric"
                       maxLength={1}
-                      value={otp[idx]}
+                      value={digit}
                       onChange={(e) => {
-                        const val = e.target.value;
-                        const next = [...otp];
-                        next[idx] = val;
-                        setOtp(next);
+                        const val = e.target.value.replace(/\D/g, "");
+                        const newOtp = [...otp];
+                        newOtp[index] = val;
+                        setOtp(newOtp);
+                        if (val && index < 5) {
+                          document.getElementById(`otp-${index + 1}`)?.focus();
+                        }
                       }}
-                      className="w-12 h-14 rounded-xl border border-border bg-surface text-center font-heading font-extrabold text-lg text-prussian focus:outline-none focus:ring-2 focus:ring-saffron"
+                      className="w-full h-12 text-center text-lg font-bold rounded-xl border border-gray-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 bg-gray-50 focus:bg-white focus:outline-none"
                     />
                   ))}
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-12 bg-saffron hover:bg-saffron-dark text-white font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm"
-              >
-                {isLoading ? "Verifying..." : "Verify & Sign In"}
-              </Button>
-
-              <div className="flex items-center justify-between text-xs pt-2">
-                <button
-                  type="button"
-                  onClick={() => setOtpSent(false)}
-                  className="text-text-secondary hover:text-prussian underline"
+                <Button
+                  type="submit"
+                  disabled={isLoading || otp.join("").length < 6}
+                  className="w-full h-12 sm:h-13 bg-indigo-700 hover:bg-indigo-800 text-white font-bold rounded-2xl text-sm transition-all shadow-md cursor-pointer"
                 >
-                  Change phone number
-                </button>
-                <button
-                  type="button"
-                  className="text-saffron-dark font-bold hover:underline"
-                >
-                  Resend OTP
-                </button>
-              </div>
-            </form>
-          )}
+                  {isLoading ? "Verifying..." : "Verify & Sign In"}
+                </Button>
 
-          <p className="text-[11px] text-text-muted text-center leading-relaxed">
-            By continuing, you agree to DHANDHA&apos;s{" "}
-            <Link href="/terms" className="underline hover:text-prussian">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link href="/privacy" className="underline hover:text-prussian">
-              Privacy Policy
-            </Link>
-            .
-          </p>
-        </div>
-
-        <div className="text-xs text-text-muted text-center">
-          DHANDHA — India&apos;s Cooking Services Marketplace
-        </div>
-      </div>
-
-      {/* Right Column: 3D Visual & Brand Pitch */}
-      <div className="hidden lg:flex lg:col-span-6 bg-gradient-to-br from-prussian via-ink-black to-prussian p-12 flex-col justify-between text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-saffron/15 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex items-center justify-between">
-          <Badge variant="saffron" className="text-xs font-bold">
-            One Account • Endless Kitchen Opportunities
-          </Badge>
-          <span className="text-xs text-almond-500 font-semibold">
-            Kaam bhi. Khana bhi.
-          </span>
-        </div>
-
-        <div className="my-auto py-10 relative z-10 flex flex-col items-center">
-          <div className="w-80 h-80 mb-6">
-            <ThreeDElement
-              variant="hero"
-              badgeText="Universal Marketplace"
-              className="w-full h-full"
-            />
+                <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setOtpSent(false)}
+                    className="text-indigo-600 font-semibold hover:underline"
+                  >
+                    Change Number
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {}}
+                    className="text-gray-500 hover:text-ink-black"
+                  >
+                    Resend Code
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
-          <h2 className="text-2xl font-heading font-extrabold text-center max-w-sm">
-            Cooks, Chefs, Foodies and Kitchens — All Connected.
-          </h2>
-          <p className="text-xs text-almond-500 text-center max-w-xs mt-2">
-            One single login allows you to hire a cook, order homemade tiffins, or apply for
-            cooking jobs across India.
-          </p>
-        </div>
 
-        <div className="relative z-10 flex items-center justify-between text-xs text-almond-600 border-t border-white/10 pt-4">
-          <span>100% Verified Community</span>
-          <span>FSSAI Compliant Platform</span>
+          {/* Footer Terms Notice matching media_1794460711922_654d5bf0.png */}
+          <div className="text-center pt-4">
+            <p className="text-[11px] text-gray-400">
+              By continuing, you agree to our{" "}
+              <Link href="/terms" className="text-gray-600 underline font-medium hover:text-ink-black">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-gray-600 underline font-medium hover:text-ink-black">
+                Privacy Policy
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

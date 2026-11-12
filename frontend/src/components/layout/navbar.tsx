@@ -2,233 +2,216 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Search,
+  Sparkles,
+  ChefHat,
+  UtensilsCrossed,
+  Utensils,
+  Briefcase,
+  Smile,
   Bell,
   Heart,
-  User,
   PlusCircle,
-  Menu,
   X,
-  ChefHat,
-  Briefcase,
-  UtensilsCrossed,
-  MessageSquare,
-  Sparkles,
+  LogOut,
+  LayoutDashboard,
   ShieldCheck,
   Building2,
   ChevronRight,
-  LogOut,
-  LayoutDashboard,
+  User as UserIcon,
 } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { CitySelector } from "@/components/layout/city-selector";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { sampleUsers } from "@/lib/sample-data";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { label: "Explore", href: "/explore", badge: null },
-  { label: "Find Cooks", href: "/cooks", badge: "Hot" },
-  { label: "Book Chef", href: "/chefs", badge: null },
-  { label: "Food Market", href: "/food", badge: null },
-  { label: "Jobs", href: "/jobs", badge: "Hiring" },
-  { label: "Community", href: "/community", badge: null },
+// District Category Tabs with icons matching media_1794460697493_4183360b.jpg & media_1794460697503_bc049302.jpg
+export const districtTabs = [
+  {
+    id: "for-you",
+    label: "For you",
+    href: "/",
+    icon: Sparkles,
+  },
+  {
+    id: "cooks",
+    label: "Find Cooks",
+    href: "/cooks",
+    icon: ChefHat,
+  },
+  {
+    id: "chefs",
+    label: "Dining & Chefs",
+    href: "/chefs",
+    icon: Utensils,
+  },
+  {
+    id: "food",
+    label: "Homemade Food",
+    href: "/food",
+    icon: UtensilsCrossed,
+  },
+  {
+    id: "jobs",
+    label: "Jobs & Staffing",
+    href: "/jobs",
+    icon: Briefcase,
+  },
+  {
+    id: "community",
+    label: "Community",
+    href: "/community",
+    icon: Smile,
+  },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Default mock logged in
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-  const currentUser = sampleUsers[0]; // Priya Sharma (Customer & hirer)
+  const currentUser = sampleUsers[0]; // Priya Sharma
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/explore?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-surface/95 backdrop-blur-md border-b border-border shadow-xs transition-all">
+    <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all">
+      {/* Top Header Row (District Style: Location left, DHANDHA logo center/left, search middle, user avatar right) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
-          {/* Left: Logo & City Selector */}
-          <div className="flex items-center gap-3 sm:gap-6 shrink-0">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-3 sm:gap-6">
+          {/* Left: Brand Logo & Location */}
+          <div className="flex items-center gap-3 sm:gap-5 shrink-0">
             <Logo size="md" showTagline={false} />
-            <div className="hidden sm:block">
-              <CitySelector />
-            </div>
+            <div className="h-6 w-px bg-gray-200 hidden sm:block" />
+            <CitySelector variant="header" currentCity="Gurugram" />
           </div>
 
-          {/* Center: Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-            {navItems.map((item) => {
-              const isActive =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href);
+          {/* Center: Search Bar (District Embedded Pill) */}
+          <div className="flex-1 max-w-xl hidden md:block">
+            <form onSubmit={handleSearchSubmit} className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search for cooks, private chefs and homemade food"
+                className="w-full h-11 pl-11 pr-4 rounded-2xl bg-gray-50 border border-gray-200 text-sm font-medium text-ink-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:bg-white transition-all shadow-inner"
+              />
+            </form>
+          </div>
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "relative px-3.5 py-2 text-sm font-semibold rounded-xl transition-all flex items-center gap-1.5",
-                    isActive
-                      ? "text-prussian bg-almond-800/60 font-bold"
-                      : "text-text-secondary hover:text-prussian hover:bg-almond-900/50"
-                  )}
-                >
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-saffron-subtle text-saffron-dark font-bold leading-tight">
-                      {item.badge}
-                    </span>
-                  )}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-3.5 right-3.5 h-0.5 bg-saffron rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Right: Actions & User Profile */}
+          {/* Right: Quick Actions & Profile */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Mobile city selector trigger */}
-            <div className="sm:hidden">
-              <CitySelector />
-            </div>
-
-            {/* Post Requirement CTA Button */}
-            <Link href="/jobs/post" className="hidden md:inline-flex">
+            {/* Post Requirement CTA */}
+            <Link href="/dashboard" className="hidden lg:inline-flex">
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-1.5 rounded-full border-saffron/70 text-saffron-dark bg-saffron-subtle/30 hover:bg-saffron hover:text-white transition-all text-xs font-semibold px-3.5"
+                className="rounded-full border-gray-200 text-xs font-bold text-gray-700 hover:border-indigo-600 hover:text-indigo-700"
               >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>Post Requirement</span>
+                <PlusCircle className="w-3.5 h-3.5 mr-1.5 text-indigo-600" />
+                Post Cook Need
               </Button>
             </Link>
 
-            {/* Notifications Bell */}
+            {/* Notifications */}
             <Link
               href="/dashboard"
-              className="relative p-2 rounded-full hover:bg-almond-800/60 text-text-secondary hover:text-prussian transition-colors"
+              className="w-9 h-9 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-600 transition-colors relative"
               aria-label="Notifications"
             >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-saffron ring-2 ring-white" />
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-saffron" />
             </Link>
 
-            {/* User Dropdown / Login */}
+            {/* Profile Dropdown / Login */}
             {isLoggedIn ? (
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2 p-1 pl-1.5 pr-2 rounded-full border border-border hover:border-prussian transition-all focus:outline-none focus:ring-2 focus:ring-saffron"
-                  aria-expanded={userDropdownOpen}
+                  className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-indigo-500/20 transition-all focus:outline-none"
+                  aria-label="User profile menu"
                 >
-                  <Avatar className="w-7 h-7 sm:w-8 sm:h-8 border border-white">
+                  <Avatar className="w-9 h-9 border border-gray-200 shadow-xs">
                     <AvatarImage src={currentUser.avatarUrl} alt={currentUser.fullName} />
-                    <AvatarFallback>{currentUser.fullName.slice(0, 2)}</AvatarFallback>
+                    <AvatarFallback className="bg-indigo-50 text-indigo-700 font-bold text-xs">
+                      PS
+                    </AvatarFallback>
                   </Avatar>
-                  <span className="hidden xl:inline text-xs font-semibold text-text-primary max-w-[100px] truncate">
-                    {currentUser.fullName}
-                  </span>
                 </button>
 
                 {/* Dropdown Menu */}
                 {userDropdownOpen && (
                   <div
-                    className="absolute right-0 mt-2 w-72 rounded-2xl bg-surface border border-border shadow-elevated p-2 animate-fade-in z-50"
+                    className="absolute right-0 mt-2 w-72 bg-white rounded-3xl border border-gray-100 shadow-2xl py-3 z-50 animate-in fade-in slide-in-from-top-2"
                     onMouseLeave={() => setUserDropdownOpen(false)}
                   >
-                    {/* User summary */}
-                    <div className="p-3 border-b border-border/80 flex items-center gap-3">
-                      <Avatar className="w-10 h-10 border border-saffron/30">
-                        <AvatarImage src={currentUser.avatarUrl} />
-                        <AvatarFallback>{currentUser.fullName.slice(0, 2)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col">
-                        <span className="font-heading font-bold text-sm text-prussian">
-                          {currentUser.fullName}
-                        </span>
-                        <span className="text-xs text-text-secondary">{currentUser.phone}</span>
-                        <span className="text-[10px] font-semibold text-saffron mt-0.5">
-                          Universal DHANDHA Account
-                        </span>
+                    <div className="px-5 py-3 border-b border-gray-100">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-11 h-11 border border-gray-200">
+                          <AvatarImage src={currentUser.avatarUrl} />
+                          <AvatarFallback>PS</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-heading font-bold text-sm text-ink-black flex items-center gap-1">
+                            {currentUser.fullName}
+                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                          </div>
+                          <span className="text-[11px] text-gray-400 block">{currentUser.email}</span>
+                          <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-purple-50 text-indigo-700 font-bold text-[10px]">
+                            Universal Account
+                          </span>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Role & Dashboard Switcher (Key Product Principle) */}
-                    <div className="p-2 space-y-1">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted px-2 block">
-                        Switch Capabilities
-                      </span>
-
+                    <div className="px-2 py-2 space-y-1">
                       <Link
                         href="/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-prussian hover:bg-almond-800/60 transition-colors"
+                        className="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
                       >
-                        <LayoutDashboard className="w-4 h-4 text-prussian" />
-                        <span>Customer Dashboard</span>
+                        <LayoutDashboard className="w-4 h-4 text-indigo-600" />
+                        <span>My Dashboard</span>
                       </Link>
-
                       <Link
                         href="/dashboard/cook"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-prussian hover:bg-almond-800/60 transition-colors"
+                        className="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
                       >
-                        <div className="flex items-center gap-2.5">
-                          <ChefHat className="w-4 h-4 text-saffron" />
-                          <span>Cook / Chef Mode</span>
-                        </div>
-                        <Badge variant="saffron" className="text-[9px] px-1.5 py-0">
-                          Active
-                        </Badge>
+                        <ChefHat className="w-4 h-4 text-amber-500" />
+                        <span>Cook / Chef Mode</span>
                       </Link>
-
                       <Link
                         href="/dashboard/restaurant"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-prussian hover:bg-almond-800/60 transition-colors"
+                        className="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-xl transition-colors"
                       >
-                        <div className="flex items-center gap-2.5">
-                          <Building2 className="w-4 h-4 text-grape" />
-                          <span>Restaurant Hiring</span>
-                        </div>
-                        <ShieldCheck className="w-3.5 h-3.5 text-success" />
-                      </Link>
-
-                      <Link
-                        href="/dashboard/admin"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-text-secondary hover:bg-almond-800/60 transition-colors"
-                      >
-                        <ShieldCheck className="w-4 h-4 text-prussian" />
-                        <span>Admin Verification Hub</span>
+                        <Building2 className="w-4 h-4 text-blue-500" />
+                        <span>Commercial Hiring</span>
                       </Link>
                     </div>
 
-                    <div className="pt-2 border-t border-border/80">
-                      <Link
-                        href="/dashboard/settings"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs text-text-secondary hover:text-prussian hover:bg-almond-800/60 transition-colors"
-                      >
-                        <User className="w-4 h-4" />
-                        <span>Account Settings & Addresses</span>
-                      </Link>
+                    <div className="pt-2 border-t border-gray-100 px-2">
                       <button
                         type="button"
                         onClick={() => {
                           setIsLoggedIn(false);
                           setUserDropdownOpen(false);
                         }}
-                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs text-danger hover:bg-danger-light transition-colors text-left font-medium"
+                        className="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-xl transition-colors text-left"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign Out</span>
@@ -238,64 +221,68 @@ export function Navbar() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link href="/login">
-                  <Button variant="ghost" size="sm" className="font-semibold text-xs sm:text-sm">
-                    Log in
-                  </Button>
-                </Link>
-                <Link href="/register">
-                  <Button variant="default" size="sm" className="font-semibold text-xs sm:text-sm">
-                    Sign up
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/login">
+                <Button
+                  size="sm"
+                  className="rounded-full bg-ink-black text-white hover:bg-black font-bold text-xs px-5 shadow-xs"
+                >
+                  Sign In
+                </Button>
+              </Link>
             )}
-
-            {/* Mobile Hamburger Button */}
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-text-secondary hover:text-prussian hover:bg-almond-800/60 focus:outline-none"
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
           </div>
+        </div>
+
+        {/* Mobile Search Row (Shown only on small screens) */}
+        <div className="pb-3 md:hidden">
+          <form onSubmit={handleSearchSubmit} className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search for events, cooks & private kitchens"
+              className="w-full h-10 pl-10 pr-4 rounded-xl bg-gray-50 border border-gray-200 text-xs font-medium placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+            />
+          </form>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-border bg-surface px-4 pt-3 pb-6 space-y-3 animate-fade-in shadow-modal">
-          <div className="space-y-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-xl text-sm font-semibold text-text-primary hover:bg-almond-800/60 transition-colors"
-              >
-                <span>{item.label}</span>
-                <ChevronRight className="w-4 h-4 text-text-muted" />
-              </Link>
-            ))}
-          </div>
+      {/* Category Tabs Pill Bar (Exact match to District media_1794460697493_4183360b.jpg) */}
+      <div className="border-t border-gray-100 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar py-2">
+            {districtTabs.map((tab) => {
+              const isActive =
+                tab.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(tab.href);
+              const IconComponent = tab.icon;
 
-          <div className="pt-3 border-t border-border flex flex-col gap-2">
-            <Link
-              href="/jobs/post"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full"
-            >
-              <Button variant="default" className="w-full justify-center gap-2">
-                <PlusCircle className="w-4 h-4" />
-                <span>Post Requirement / Job</span>
-              </Button>
-            </Link>
+              return (
+                <Link
+                  key={tab.id}
+                  href={tab.href}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer",
+                    isActive
+                      ? "bg-purple-100 text-indigo-900 font-bold shadow-xs"
+                      : "text-gray-600 hover:text-ink-black hover:bg-gray-50"
+                  )}
+                >
+                  <IconComponent
+                    className={cn(
+                      "w-4 h-4 transition-colors",
+                      isActive ? "text-indigo-700" : "text-gray-400"
+                    )}
+                  />
+                  <span>{tab.label}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }

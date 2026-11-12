@@ -1,0 +1,22 @@
+# Node
+node_modules/
+.next/
+out/
+build/
+dist/
+*.log
+*.tsbuildinfo
+.env*.local
+
+# Java / Spring Boot
+target/
+*.class
+*.jar
+*.war
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

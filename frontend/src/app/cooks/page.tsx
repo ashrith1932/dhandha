@@ -15,6 +15,7 @@ import {
   X,
   ArrowUpDown,
   Sparkles,
+  MessageCircle,
 } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { SectionContainer } from "@/components/layout/section";
@@ -310,8 +311,20 @@ export default function CooksDiscoveryPage() {
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="p-4 bg-almond-900/30 border-t border-border flex gap-2">
+                  {/* Actions with Direct WhatsApp Support per ref7.html */}
+                  <div className="p-4 bg-almond-900/30 border-t border-border flex items-center gap-2">
+                    {cook.whatsappNumber && (
+                      <a
+                        href={`https://wa.me/${cook.whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${cook.user?.fullName}, I found your cook profile on DHANDHA!`)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors"
+                        aria-label="WhatsApp Cook"
+                        title="Chat on WhatsApp"
+                      >
+                        <MessageCircle className="w-4 h-4 text-emerald-600" />
+                      </a>
+                    )}
                     <Link href={`/cooks/${cook.id}`} className="flex-1">
                       <Button
                         size="sm"
@@ -320,13 +333,13 @@ export default function CooksDiscoveryPage() {
                         View Profile
                       </Button>
                     </Link>
-                    <Link href={`/cooks/${cook.id}#hire`}>
+                    <Link href={`/cooks/${cook.id}`}>
                       <Button
                         size="sm"
                         variant="default"
                         className="bg-saffron hover:bg-saffron-dark text-white rounded-xl text-xs font-bold"
                       >
-                        Hire
+                        Hire Cook
                       </Button>
                     </Link>
                   </div>
