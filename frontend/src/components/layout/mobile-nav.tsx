@@ -11,7 +11,6 @@ import {
   User,
   ChefHat,
   Briefcase,
-  Store,
   UtensilsCrossed,
   X,
   Building2,

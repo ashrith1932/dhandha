@@ -48,7 +48,7 @@ export default function JobsPage() {
   return (
     <MainLayout>
       {/* Header */}
-      <div className="bg-prussian text-white py-10 sm:py-14 border-b border-white/10">
+      <div className="band-dark bg-noise relative overflow-hidden text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-2">
@@ -65,7 +65,7 @@ export default function JobsPage() {
             </div>
 
             <Link href="/jobs/post">
-              <Button size="lg" className="bg-saffron hover:bg-saffron-dark text-white font-bold rounded-2xl shadow-lg gap-2 text-sm">
+              <Button size="lg" className="font-bold rounded-2xl shadow-lg gap-2 text-sm">
                 <PlusCircle className="w-4 h-4" />
                 <span>Post a Job / Need</span>
               </Button>
@@ -188,7 +188,7 @@ export default function JobsPage() {
                   </div>
 
                   <Link href={`/jobs/${job.id}`} className="block">
-                    <Button className="w-full sm:w-auto bg-saffron hover:bg-saffron-dark text-white rounded-xl text-xs font-bold px-6">
+                    <Button className="w-full sm:w-auto rounded-xl text-xs font-bold px-6">
                       Apply Now
                     </Button>
                   </Link>

@@ -22,9 +22,11 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { popularCities } from "@/lib/sample-data";
 import { cn } from "@/lib/utils";
+import { ToastProvider, useToast } from "@/components/ui/toast";
 
-export default function RegisterPage() {
+function RegisterFlow() {
   const router = useRouter();
+  const { toast } = useToast();
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Form State
@@ -55,6 +57,7 @@ export default function RegisterPage() {
   };
 
   const handleComplete = () => {
+    toast("Welcome aboard!", { description: "Your DHANDHA account is ready. Let's set up your kitchen." });
     router.push("/dashboard");
   };
 
@@ -129,7 +132,7 @@ export default function RegisterPage() {
               <Button
                 onClick={() => setStep(2)}
                 disabled={phone.length < 10}
-                className="w-full h-12 bg-saffron hover:bg-saffron-dark text-white font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm gap-2"
+                className="w-full h-12 font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm gap-2"
               >
                 <span>Continue</span>
                 <ArrowRight className="w-4 h-4" />
@@ -201,7 +204,7 @@ export default function RegisterPage() {
               <Button
                 onClick={() => setStep(3)}
                 disabled={!fullName.trim()}
-                className="w-full h-12 bg-saffron hover:bg-saffron-dark text-white font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm gap-2"
+                className="w-full h-12 font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm gap-2"
               >
                 <span>Continue to Interests</span>
                 <ArrowRight className="w-4 h-4" />
@@ -268,9 +271,9 @@ export default function RegisterPage() {
               >
                 Skip for now
               </button>
-              <Button
+              <Button variant="secondary"
                 onClick={handleComplete}
-                className="w-full sm:w-auto h-12 bg-prussian hover:bg-prussian-600 text-white font-bold rounded-2xl px-8 text-sm order-1 sm:order-2"
+                className="w-full sm:w-auto h-12 rounded-2xl px-8 text-sm order-1 sm:order-2"
               >
                 Complete Setup & Go to Marketplace
               </Button>
@@ -283,5 +286,13 @@ export default function RegisterPage() {
         DHANDHA — Every Cook. Every Kitchen. Every Opportunity.
       </footer>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <ToastProvider>
+      <RegisterFlow />
+    </ToastProvider>
   );
 }

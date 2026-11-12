@@ -41,6 +41,7 @@ function FoodDetailContent() {
   const [activeHeroImage, setActiveHeroImage] = useState(galleryImages[0]);
   const [quantity, setQuantity] = useState(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderId] = useState(() => Math.floor(100000 + Math.random() * 900000));
 
   const subtotal = food.price * quantity;
   const deliveryFee = 35;
@@ -93,7 +94,7 @@ function FoodDetailContent() {
                   className={cn(
                     "relative h-18 sm:h-22 rounded-lg overflow-hidden border-2 transition-all cursor-pointer",
                     activeHeroImage === thumb
-                      ? "border-indigo-600 ring-2 ring-indigo-600/30"
+                      ? "border-saffron ring-2 ring-saffron/30"
                       : "border-transparent opacity-80 hover:opacity-100"
                   )}
                 >
@@ -111,7 +112,7 @@ function FoodDetailContent() {
           <div className="lg:col-span-6 space-y-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Badge variant="outline" className="border-indigo-200 text-indigo-950 bg-purple-50 text-[10px] font-bold py-0 px-2">
+                <Badge variant="outline" className="border-saffron/30 text-saffron-dark bg-saffron-subtle text-[10px] font-bold py-0 px-2">
                   {food.category}
                 </Badge>
                 <span className="text-xs text-gray-500">• {food.provider?.providerName}</span>
@@ -151,7 +152,7 @@ function FoodDetailContent() {
             {/* 4 Quick Facts Cards in 2x2 Grid */}
             <div className="grid grid-cols-2 gap-2">
               <div className="border border-gray-200/90 rounded-xl p-2.5 flex items-center gap-2.5 bg-white">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-indigo-700 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-saffron-subtle text-saffron-dark flex items-center justify-center shrink-0">
                   <Clock className="w-3.5 h-3.5" />
                 </div>
                 <div>
@@ -161,7 +162,7 @@ function FoodDetailContent() {
               </div>
 
               <div className="border border-gray-200/90 rounded-xl p-2.5 flex items-center gap-2.5 bg-white">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-indigo-700 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-saffron-subtle text-saffron-dark flex items-center justify-center shrink-0">
                   <ChefHat className="w-3.5 h-3.5" />
                 </div>
                 <div>
@@ -171,7 +172,7 @@ function FoodDetailContent() {
               </div>
 
               <div className="border border-gray-200/90 rounded-xl p-2.5 flex items-center gap-2.5 bg-white">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-indigo-700 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-saffron-subtle text-saffron-dark flex items-center justify-center shrink-0">
                   <MapPin className="w-3.5 h-3.5" />
                 </div>
                 <div>
@@ -181,7 +182,7 @@ function FoodDetailContent() {
               </div>
 
               <div className="border border-gray-200/90 rounded-xl p-2.5 flex items-center gap-2.5 bg-white">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-indigo-700 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-saffron-subtle text-saffron-dark flex items-center justify-center shrink-0">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                 </div>
                 <div>
@@ -265,7 +266,7 @@ function FoodDetailContent() {
                 </div>
                 <div className="pt-1.5 border-t border-gray-200 flex items-center justify-between font-bold text-xs text-prussian">
                   <span>Total Amount:</span>
-                  <span className="text-indigo-900">{formatCurrency(total)}</span>
+                  <span className="text-prussian">{formatCurrency(total)}</span>
                 </div>
               </div>
 
@@ -275,13 +276,13 @@ function FoodDetailContent() {
                   <CheckCircle2 className="w-4 h-4 mx-auto text-emerald-600" />
                   <span>Order Placed Successfully!</span>
                   <p className="text-[10px] font-normal text-emerald-700">
-                    Order #DH-{Math.floor(100000 + Math.random() * 900000)} sent to {food.provider?.providerName}.
+                    Order #DH-{orderId} sent to {food.provider?.providerName}.
                   </p>
                 </div>
               ) : (
                 <Button
                   onClick={() => setOrderPlaced(true)}
-                  className="w-full h-9 bg-prussian hover:bg-indigo-700 text-white font-bold rounded-lg text-xs shadow-xs transition-colors"
+                  className="w-full h-9 bg-prussian hover:bg-prussian-light text-white font-bold rounded-lg text-xs shadow-xs transition-colors"
                 >
                   Confirm & Place Order
                 </Button>
@@ -349,7 +350,7 @@ function FoodDetailContent() {
           {/* Side Sticky Card (4 cols) */}
           <div className="lg:col-span-4">
             <aside className="sticky top-24 border border-gray-200 rounded-xl p-4 shadow-xs bg-white space-y-3">
-              <div className="p-3 rounded-lg bg-purple-50/60 border border-purple-100">
+              <div className="p-3 rounded-lg bg-saffron-subtle/60 border border-saffron/20">
                 <span className="text-[10px] text-gray-400 block uppercase font-semibold">Unit Price</span>
                 <div className="text-xl font-heading font-bold text-prussian">
                   {formatCurrency(food.price)}

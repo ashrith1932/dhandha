@@ -42,7 +42,7 @@ export default function FoodMarketplacePage() {
   return (
     <MainLayout>
       {/* Compact Banner */}
-      <div className="bg-gradient-to-r from-[#1E1940] via-[#2A2359] to-[#161B33] text-white py-6 sm:py-8 border-b border-white/10">
+      <div className="band-dark bg-noise relative overflow-hidden text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold">
@@ -58,8 +58,9 @@ export default function FoodMarketplacePage() {
             )}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight">
-            Authentic Homemade Meals & Daily Tiffins
+          <h1 className="font-heading text-3xl sm:text-5xl font-extrabold tracking-[-0.04em] leading-[1.02] max-w-3xl">
+            Authentic homemade meals<br className="hidden sm:block" />
+            <span className="text-gradient-gold"> & daily tiffins.</span>
           </h1>
           <p className="text-xs sm:text-sm text-gray-300 max-w-xl leading-relaxed">
             Nutritious home-cooked meals and daily subscription tiffins prepared in certified private home kitchens. Order in-app or chat directly on WhatsApp.
@@ -73,7 +74,7 @@ export default function FoodMarketplacePage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search dishes (e.g. Gujarati Thali, Dosa, Misal Pav)..."
-              className="w-full h-9 pl-10 pr-3 rounded-full bg-white text-prussian placeholder:text-gray-400 text-xs sm:text-sm font-medium shadow-xs focus:outline-none focus:ring-1.5 focus:ring-indigo-600"
+              className="w-full h-9 pl-10 pr-3 rounded-full bg-white text-prussian placeholder:text-gray-400 text-xs sm:text-sm font-medium shadow-xs focus:outline-none focus:ring-1.5 focus:ring-saffron"
             />
           </div>
         </div>
@@ -91,7 +92,7 @@ export default function FoodMarketplacePage() {
                 className={cn(
                   "px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer",
                   selectedCategory === cat
-                    ? "bg-purple-100 text-indigo-950 font-bold shadow-xs"
+                    ? "bg-[#FFB03A] text-ink-black font-black shadow-glow-soft"
                     : "bg-gray-100 text-gray-600 hover:text-prussian hover:bg-gray-200"
                 )}
               >
@@ -125,7 +126,7 @@ export default function FoodMarketplacePage() {
             return (
               <Card
                 key={food.id}
-                className="overflow-hidden border border-gray-200/90 hover:border-indigo-600 hover:shadow-card-hover transition-all rounded-2xl bg-white group flex flex-col justify-between"
+                className="overflow-hidden border border-gray-200/90 hover:border-saffron hover:shadow-card-hover transition-all rounded-2xl bg-white group flex flex-col justify-between"
               >
                 <div>
                   {/* Food Image */}
@@ -149,7 +150,7 @@ export default function FoodMarketplacePage() {
                   {/* Details */}
                   <div className="p-3.5 space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-indigo-900 bg-purple-50 px-2 py-0.2 rounded-md truncate max-w-[150px] text-[11px]">
+                      <span className="font-semibold text-prussian bg-saffron-subtle px-2 py-0.2 rounded-md truncate max-w-[150px] text-[11px]">
                         {food.provider?.providerName}
                       </span>
                       <span className="flex items-center gap-1 text-saffron font-bold text-xs">
@@ -158,7 +159,7 @@ export default function FoodMarketplacePage() {
                       </span>
                     </div>
 
-                    <h3 className="font-heading font-bold text-sm text-prussian group-hover:text-indigo-700 transition-colors line-clamp-1">
+                    <h3 className="font-heading font-bold text-sm text-prussian group-hover:text-ember transition-colors line-clamp-1">
                       {food.name}
                     </h3>
 
@@ -197,9 +198,9 @@ export default function FoodMarketplacePage() {
                     )}
 
                     <Link href={`/food/${food.id}`}>
-                      <Button
+                      <Button variant="secondary"
                         size="sm"
-                        className="h-8 bg-prussian hover:bg-indigo-700 text-white rounded-lg text-xs font-bold px-3"
+                        className="h-9 rounded-xl text-xs font-bold px-4"
                       >
                         Order
                       </Button>

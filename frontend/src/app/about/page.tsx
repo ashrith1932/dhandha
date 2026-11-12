@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 export default function AboutPage() {
   return (
     <MainLayout>
-      <div className="bg-prussian text-white py-12 sm:py-20 border-b border-white/10 text-center relative overflow-hidden">
+      <div className="band-dark bg-noise relative overflow-hidden text-white py-12 sm:py-20 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 relative z-10">
           <Badge variant="saffron" className="text-xs font-bold mx-auto">
             Our Mission & Story

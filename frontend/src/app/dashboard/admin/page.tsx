@@ -81,7 +81,7 @@ export default function AdminDashboardPage() {
   return (
     <MainLayout>
       {/* Admin Header */}
-      <div className="bg-prussian text-white py-8 sm:py-12 border-b border-white/10">
+      <div className="band-dark bg-noise relative overflow-hidden text-white py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <Badge variant="saffron" className="text-xs font-bold">
             Administrative Operations
@@ -271,7 +271,7 @@ export default function AdminDashboardPage() {
                   />
                 </div>
 
-                <Button className="w-full bg-prussian hover:bg-prussian-600 text-white rounded-xl text-xs font-bold mt-2">
+                <Button variant="secondary" className="w-full rounded-xl text-xs font-bold mt-2">
                   Save Platform Rates
                 </Button>
               </div>

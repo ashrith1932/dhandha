@@ -191,7 +191,7 @@ function JobDetailContent() {
 
                   <Button
                     onClick={() => setApplied(true)}
-                    className="w-full h-12 bg-saffron hover:bg-saffron-dark text-white font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm gap-2"
+                    className="w-full h-12 font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm gap-2"
                   >
                     <Send className="w-4 h-4" />
                     <span>Submit Application</span>

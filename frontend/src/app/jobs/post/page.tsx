@@ -55,7 +55,7 @@ function PostJobContent() {
 
   return (
     <MainLayout>
-      <div className="bg-prussian text-white py-10 border-b border-white/10">
+      <div className="band-dark bg-noise relative overflow-hidden text-white py-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
           <Badge variant="saffron" className="text-xs font-bold">
             Post Requirement
@@ -86,7 +86,7 @@ function PostJobContent() {
               </p>
               <div className="pt-4 flex items-center justify-center gap-3">
                 <Link href="/jobs">
-                  <Button className="bg-saffron hover:bg-saffron-dark text-white rounded-xl font-bold">
+                  <Button className="rounded-xl font-bold">
                     View in Job Listings
                   </Button>
                 </Link>
@@ -306,7 +306,7 @@ function PostJobContent() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 bg-saffron hover:bg-saffron-dark text-white font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm"
+                className="w-full h-12 font-bold rounded-2xl shadow-lg shadow-saffron/20 text-sm"
               >
                 {isSubmitting ? "Publishing Opportunity..." : "Publish Job Requirement"}
               </Button>

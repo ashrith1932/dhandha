@@ -30,7 +30,7 @@ export default function RestaurantDashboardPage() {
   return (
     <MainLayout>
       {/* Restaurant Header */}
-      <div className="bg-prussian text-white py-8 sm:py-12 border-b border-white/10">
+      <div className="band-dark bg-noise relative overflow-hidden text-white py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
@@ -53,7 +53,7 @@ export default function RestaurantDashboardPage() {
             </div>
 
             <Link href="/jobs/post?type=RESTAURANT">
-              <Button size="lg" className="bg-saffron hover:bg-saffron-dark text-white font-bold rounded-2xl shadow-lg gap-2 text-sm">
+              <Button size="lg" className="font-bold rounded-2xl shadow-lg gap-2 text-sm">
                 <PlusCircle className="w-4 h-4" />
                 <span>Post Commercial Job</span>
               </Button>
@@ -145,7 +145,7 @@ export default function RestaurantDashboardPage() {
                         👥 {job.applicationsCount} Culinary Applicants Received
                       </span>
                       <Link href={`/jobs/${job.id}`}>
-                        <Button size="sm" className="bg-prussian hover:bg-prussian-600 text-white rounded-xl text-xs font-bold">
+                        <Button variant="secondary" size="sm" className="rounded-xl text-xs font-bold">
                           Review Applicants Pipeline →
                         </Button>
                       </Link>

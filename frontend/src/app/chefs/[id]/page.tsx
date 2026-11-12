@@ -100,7 +100,7 @@ function ChefDetailContent() {
                   className={cn(
                     "relative h-18 sm:h-22 rounded-lg overflow-hidden border-2 transition-all cursor-pointer",
                     activeHeroImage === thumb
-                      ? "border-indigo-600 ring-2 ring-indigo-600/30"
+                      ? "border-saffron ring-2 ring-saffron/30"
                       : "border-transparent opacity-80 hover:opacity-100"
                   )}
                 >
@@ -118,7 +118,7 @@ function ChefDetailContent() {
           <div className="lg:col-span-6 space-y-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Badge variant="default" className="bg-indigo-950 text-white text-[10px] font-bold py-0 px-2">
+                <Badge variant="default" className="bg-prussian text-white text-[10px] font-bold py-0 px-2">
                   Chef Table
                 </Badge>
                 <span className="text-xs text-gray-500">• Chef {service.cook?.user?.fullName}</span>
@@ -169,7 +169,7 @@ function ChefDetailContent() {
                   key={idx}
                   className="border border-gray-200/90 rounded-xl p-2.5 flex items-center gap-2.5 bg-white"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-indigo-700 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-saffron-subtle text-saffron-dark flex items-center justify-center shrink-0">
                     {idx === 0 && <Clock className="w-3.5 h-3.5" />}
                     {idx === 1 && <Users className="w-3.5 h-3.5" />}
                     {idx === 2 && <MapPin className="w-3.5 h-3.5" />}
@@ -249,7 +249,7 @@ function ChefDetailContent() {
                     type="date"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full h-8.5 px-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-prussian focus:outline-none focus:ring-1.5 focus:ring-indigo-600"
+                    className="w-full h-8.5 px-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-prussian focus:outline-none focus:ring-1.5 focus:ring-saffron"
                   />
                 </div>
 
@@ -282,7 +282,7 @@ function ChefDetailContent() {
               </div>
 
               {/* Price Calculation Pill */}
-              <div className="p-2 rounded-lg bg-purple-50/70 flex items-center justify-between text-xs">
+              <div className="p-2 rounded-lg bg-saffron-subtle/70 flex items-center justify-between text-xs">
                 <span className="text-gray-600">Estimated Total:</span>
                 <span className="font-heading font-bold text-sm text-prussian">
                   {formatCurrency(subtotal)}
@@ -299,9 +299,9 @@ function ChefDetailContent() {
                   </p>
                 </div>
               ) : (
-                <Button
+                <Button variant="secondary"
                   type="submit"
-                  className="w-full h-9 bg-indigo-700 hover:bg-indigo-800 text-white font-bold rounded-lg text-xs shadow-xs transition-colors"
+                  className="w-full h-10 rounded-xl text-xs"
                 >
                   Reserve Chef Experience
                 </Button>
@@ -400,7 +400,7 @@ function ChefDetailContent() {
           {/* Sticky Side Card (4 cols) */}
           <div className="lg:col-span-4">
             <aside className="sticky top-24 border border-gray-200 rounded-xl p-4 shadow-xs bg-white space-y-3">
-              <div className="p-3 rounded-lg bg-purple-50/60 border border-purple-100">
+              <div className="p-3 rounded-lg bg-saffron-subtle/60 border border-saffron/20">
                 <span className="text-[10px] text-gray-400 block uppercase font-semibold">Starting from</span>
                 <div className="text-xl font-heading font-bold text-prussian">
                   {formatCurrency(service.basePrice)}

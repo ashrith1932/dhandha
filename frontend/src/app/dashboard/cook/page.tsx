@@ -33,7 +33,7 @@ export default function CookDashboardPage() {
   return (
     <MainLayout>
       {/* Cook Header */}
-      <div className="bg-prussian text-white py-8 sm:py-12 border-b border-white/10">
+      <div className="band-dark bg-noise relative overflow-hidden text-white py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
@@ -137,7 +137,7 @@ export default function CookDashboardPage() {
                   </div>
 
                   <div className="flex items-center gap-2 pt-2">
-                    <Button size="sm" className="bg-saffron hover:bg-saffron-dark text-white rounded-xl text-xs font-bold">
+                    <Button size="sm" className="rounded-xl text-xs font-bold">
                       Accept & Call Hirer
                     </Button>
                     <Button size="sm" variant="outline" className="rounded-xl text-xs font-semibold">
@@ -162,7 +162,7 @@ export default function CookDashboardPage() {
                   </div>
 
                   <div className="flex items-center gap-2 pt-2">
-                    <Button size="sm" className="bg-saffron hover:bg-saffron-dark text-white rounded-xl text-xs font-bold">
+                    <Button size="sm" className="rounded-xl text-xs font-bold">
                       Accept Booking
                     </Button>
                     <Button size="sm" variant="outline" className="rounded-xl text-xs font-semibold">

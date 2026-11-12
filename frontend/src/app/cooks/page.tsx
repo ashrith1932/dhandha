@@ -67,16 +67,19 @@ export default function CooksDiscoveryPage() {
   return (
     <MainLayout>
       {/* Compact Header */}
-      <div className="bg-prussian text-white py-6 sm:py-8 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2.5">
-          <Badge variant="saffron" className="text-[10px] font-bold py-0 px-2">
-            Hire a Cook
-          </Badge>
-          <h1 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight">
-            Find Trusted Home Cooks Near You
+      {/* Cinematic header */}
+      <div className="band-dark bg-noise relative overflow-hidden text-white">
+        <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(242,140,40,0.35),transparent_70%)] blur-3xl" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-3.5">
+          <span className="inline-flex items-center gap-2 rounded-full border border-saffron/35 bg-saffron/10 px-3 py-1 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-[#FFB03A]">
+            <ChefHat className="h-3.5 w-3.5" /> Hire a Cook
+          </span>
+          <h1 className="font-heading text-3xl sm:text-5xl font-extrabold tracking-[-0.04em] leading-[1.02] max-w-3xl">
+            Find trusted home cooks<br className="hidden sm:block" />
+            <span className="text-gradient-gold"> near you.</span>
           </h1>
-          <p className="text-xs sm:text-sm text-gray-300 max-w-xl">
-            Browse verified daily cooks, part-time meal preparers, vegetarian specialists, and regional cuisine experts.
+          <p className="text-xs sm:text-sm text-white/65 max-w-xl leading-relaxed">
+            Verified daily cooks, part-time meal preparers, vegetarian specialists and regional cuisine experts — trial day before you commit.
           </p>
 
           {/* Quick Search */}
@@ -87,7 +90,7 @@ export default function CooksDiscoveryPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by cook name, cuisine or locality..."
-              className="w-full h-9 pl-10 pr-3 rounded-full bg-white text-prussian placeholder:text-gray-400 text-xs sm:text-sm font-medium shadow-xs focus:outline-none focus:ring-1.5 focus:ring-indigo-600"
+              className="w-full h-11 pl-11 pr-4 rounded-full bg-white text-prussian placeholder:text-text-muted text-xs sm:text-sm font-medium shadow-elevated focus:outline-none focus:ring-4 focus:ring-saffron/30"
             />
           </div>
         </div>
@@ -122,7 +125,7 @@ export default function CooksDiscoveryPage() {
                 <select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
-                  className="w-full h-8.5 px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-xs font-medium text-prussian focus:outline-none focus:ring-1.5 focus:ring-indigo-600"
+                  className="w-full h-8.5 px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-xs font-medium text-prussian focus:outline-none focus:ring-1.5 focus:ring-saffron"
                 >
                   <option value="All">All Cities</option>
                   {popularCities.map((city) => (
@@ -137,7 +140,7 @@ export default function CooksDiscoveryPage() {
                 <select
                   value={selectedCuisine}
                   onChange={(e) => setSelectedCuisine(e.target.value)}
-                  className="w-full h-8.5 px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-xs font-medium text-prussian focus:outline-none focus:ring-1.5 focus:ring-indigo-600"
+                  className="w-full h-8.5 px-2.5 rounded-lg border border-gray-200 bg-gray-50 text-xs font-medium text-prussian focus:outline-none focus:ring-1.5 focus:ring-saffron"
                 >
                   <option value="All">All Cuisines</option>
                   {popularCuisines.map((c) => (
@@ -152,7 +155,7 @@ export default function CooksDiscoveryPage() {
                   type="checkbox"
                   checked={verifiedOnly}
                   onChange={(e) => setVerifiedOnly(e.target.checked)}
-                  className="w-4 h-4 rounded text-indigo-600 border-gray-300 focus:ring-indigo-600"
+                  className="w-4 h-4 rounded text-saffron-dark border-gray-300 focus:ring-saffron"
                 />
                 <span className="text-xs text-prussian font-medium">Verified cooks only</span>
               </label>
@@ -177,7 +180,7 @@ export default function CooksDiscoveryPage() {
                 <span className="text-gray-400">Sort by:</span>
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) => setSortBy(e.target.value as "RATING" | "EXPERIENCE" | "PRICE")}
                   className="h-7.5 px-2 rounded-lg border border-gray-200 bg-gray-50 text-xs font-semibold text-prussian focus:outline-none"
                 >
                   <option value="RATING">Highest Rated</option>
@@ -192,7 +195,7 @@ export default function CooksDiscoveryPage() {
               {filteredCooks.map((cook) => (
                 <Card
                   key={cook.id}
-                  className="overflow-hidden border border-gray-200 hover:border-indigo-600 hover:shadow-card-hover transition-all flex flex-col justify-between rounded-2xl bg-white group"
+                  className="overflow-hidden border border-gray-200 hover:border-saffron hover:shadow-card-hover transition-all flex flex-col justify-between rounded-2xl bg-white group"
                 >
                   <div className="p-4 space-y-3">
                     {/* Avatar & Rating */}
@@ -214,7 +217,7 @@ export default function CooksDiscoveryPage() {
                     {/* Name & Title */}
                     <div>
                       <div className="flex items-center gap-1">
-                        <h3 className="font-heading font-bold text-sm text-prussian group-hover:text-indigo-700 transition-colors">
+                        <h3 className="font-heading font-bold text-sm text-prussian group-hover:text-ember transition-colors">
                           {cook.user?.fullName}
                         </h3>
                         <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -237,7 +240,7 @@ export default function CooksDiscoveryPage() {
                       {cook.cuisines.map((c) => (
                         <span
                           key={c.id}
-                          className="px-2 py-0.5 rounded-md bg-purple-50 text-indigo-950 text-[10px] font-semibold"
+                          className="px-2 py-0.5 rounded-md bg-saffron-subtle text-prussian text-[10px] font-semibold"
                         >
                           {c.name}
                         </span>
@@ -273,9 +276,9 @@ export default function CooksDiscoveryPage() {
                       </a>
                     )}
                     <Link href={`/cooks/${cook.id}`} className="flex-1">
-                      <Button
+                      <Button variant="secondary"
                         size="sm"
-                        className="w-full h-8 bg-prussian hover:bg-indigo-700 text-white rounded-lg text-xs font-bold"
+                        className="w-full h-9 rounded-xl text-xs font-bold"
                       >
                         View Profile
                       </Button>

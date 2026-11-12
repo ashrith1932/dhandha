@@ -14,7 +14,6 @@ interface ThreeDElementProps {
 export function ThreeDElement({
   className,
   splineUrl,
-  variant = "hero",
   badgeText = "3D Interactive Space",
 }: ThreeDElementProps) {
   const containerRef = useRef<HTMLDivElement>(null);

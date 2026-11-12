@@ -8,11 +8,6 @@ import {
   ThumbsDown,
   Share2,
   PlusCircle,
-  TrendingUp,
-  Sparkles,
-  Flame,
-  Search,
-  BookOpen,
 } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { SectionContainer } from "@/components/layout/section";
@@ -22,6 +17,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { sampleCommunityPosts } from "@/lib/sample-data";
 import { timeAgo, cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
 
 export default function CommunityPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -30,6 +26,10 @@ export default function CommunityPage() {
   const [newPostBody, setNewPostBody] = useState("");
   const [newPostCategory, setNewPostCategory] = useState("Discussion");
   const [showPostModal, setShowPostModal] = useState(false);
+  const [openCommentsFor, setOpenCommentsFor] = useState<string | null>(null);
+  const [commentDraft, setCommentDraft] = useState("");
+  const [localComments, setLocalComments] = useState<Record<string, string[]>>({});
+  const { toast } = useToast();
 
   const categories = ["All", "Discussion", "Tips & Advice", "Recipes", "Stories", "Salary Transparency"];
 
@@ -42,6 +42,25 @@ export default function CommunityPage() {
         return p;
       })
     );
+  };
+
+  const handleAddComment = (postId: string) => {
+    const draft = commentDraft.trim();
+    if (!draft) return;
+    setLocalComments((prev) => ({ ...prev, [postId]: [...(prev[postId] || []), draft] }));
+    setPosts((prev) => prev.map((p) => (p.id === postId ? { ...p, commentsCount: (p.commentsCount || 0) + 1 } : p)));
+    setCommentDraft("");
+    toast("Comment posted", { description: "Your take was added to the thread." });
+  };
+
+  const handleShare = async (post: { id: string; title: string }) => {
+    const url = `${typeof window !== "undefined" ? window.location.origin : ""}/community#${post.id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast("Link copied", { description: "Share the thread anywhere — WhatsApp, X, anywhere." });
+    } catch {
+      toast("Couldn't copy link", { description: url, variant: "warning" });
+    }
   };
 
   const handleCreatePost = (e: React.FormEvent) => {
@@ -74,6 +93,7 @@ export default function CommunityPage() {
     setNewPostTitle("");
     setNewPostBody("");
     setShowPostModal(false);
+    toast("Thread published", { description: "Your discussion is live in The Kitchen Table." });
   };
 
   const filteredPosts = posts.filter(
@@ -82,7 +102,7 @@ export default function CommunityPage() {
 
   return (
     <MainLayout>
-      <div className="bg-prussian text-white py-10 sm:py-14 border-b border-white/10">
+      <div className="band-dark bg-noise relative overflow-hidden text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-2">
@@ -100,7 +120,7 @@ export default function CommunityPage() {
 
             <Button
               onClick={() => setShowPostModal(true)}
-              className="bg-saffron hover:bg-saffron-dark text-white font-bold rounded-2xl shadow-lg gap-2 text-sm"
+              className="font-bold rounded-2xl shadow-lg gap-2 text-sm"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Create Post</span>
@@ -181,7 +201,7 @@ export default function CommunityPage() {
                     <Button
                       type="submit"
                       size="sm"
-                      className="bg-saffron hover:bg-saffron-dark text-white rounded-xl font-bold"
+                      className="rounded-xl font-bold"
                     >
                       Post Thread
                     </Button>
@@ -258,6 +278,11 @@ export default function CommunityPage() {
                   <div className="pt-3 border-t border-border flex items-center gap-4 text-xs text-text-secondary">
                     <button
                       type="button"
+                      onClick={() => {
+                        setOpenCommentsFor(openCommentsFor === post.id ? null : post.id);
+                        setCommentDraft("");
+                      }}
+                      aria-expanded={openCommentsFor === post.id}
                       className="flex items-center gap-1.5 hover:text-prussian font-semibold transition-colors"
                     >
                       <MessageSquare className="w-4 h-4 text-text-muted" />
@@ -265,12 +290,44 @@ export default function CommunityPage() {
                     </button>
                     <button
                       type="button"
+                      onClick={() => handleShare(post)}
                       className="flex items-center gap-1.5 hover:text-prussian font-semibold transition-colors"
                     >
                       <Share2 className="w-4 h-4 text-text-muted" />
                       <span>Share</span>
                     </button>
                   </div>
+
+                  {openCommentsFor === post.id && (
+                    <div className="animate-fade-in border-t border-border pt-3 space-y-2.5">
+                      {(localComments[post.id] || []).map((c, i) => (
+                        <div key={i} className="flex items-start gap-2 rounded-2xl bg-almond-900/40 px-3 py-2">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-prussian text-[8px] font-black text-saffron-light">PS</span>
+                          <p className="text-[11px] leading-snug text-text-secondary">{c}</p>
+                        </div>
+                      ))}
+                      <form
+                        onSubmit={(e) => { e.preventDefault(); handleAddComment(post.id); }}
+                        className="flex items-center gap-2"
+                      >
+                        <input
+                          autoFocus
+                          value={commentDraft}
+                          onChange={(e) => setCommentDraft(e.target.value)}
+                          placeholder="Add your take…"
+                          aria-label="Write a comment"
+                          className="h-9 flex-1 rounded-full border border-border bg-white px-4 text-[11px] font-medium placeholder:text-text-muted focus:outline-none focus:border-saffron focus:ring-2 focus:ring-saffron/25"
+                        />
+                        <button
+                          type="submit"
+                          aria-label="Post comment"
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-prussian text-saffron-light transition-transform hover:scale-105 active:scale-95"
+                        >
+                          <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                        </button>
+                      </form>
+                    </div>
+                  )}
                 </div>
               </Card>
             ))}
